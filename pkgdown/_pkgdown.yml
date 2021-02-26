@@ -1,0 +1,32 @@
+authors:
+  James Tripp:
+    href: https://warwick.ac.uk/jamestripp
+  Gregory McInerny:
+    href: https://warwick.ac.uk/fac/cross_fac/cim/people/greg-mcinerny/
+
+template:
+  params:
+    bootswatch: flatly
+reference:
+- title: "Accessing your data"
+  desc: "Functions for summarising, accessing and visualising your Grapho data."
+- contents:
+  - prepare_archive
+  - parse_grapho_archive
+  - parse_commands
+- title: "Controlling Grapho"
+  desc: "Functions for controlling Grapho."
+- contents:
+  - toggle_grapho
+- title: "Recording"
+  desc: "Grapho functions used internally by Grapho to record your data."
+- contents:
+  - create_filename
+  - create_log_file
+  - error_scribe
+  - expression_scribe
+  - introduce_grapho
+  - log_session_information
+  - setup_grapho_folder
+  - start_error_scribe
+  - start_expression_scribe
