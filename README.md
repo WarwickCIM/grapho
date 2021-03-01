@@ -1,5 +1,8 @@
 # Grapho
 
+[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+
+
 ## Introduction
 
 Grapho is an R package for recording the commands and visualisations created in an R session. Functions are provided for parsing and visualising the user workflow.

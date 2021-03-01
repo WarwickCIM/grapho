@@ -1,0 +1,44 @@
+{
+  "@context": [
+    "https://doi.org/10.5063/schema/codemeta-2.0",
+    "http://schema.org"
+  ],
+  "@type": "SoftwareSourceCode",
+  "identifier": "grapho",
+  "description": "Grapho is an R package for recording the commands and \n    visualisations created in an R session. Functions are provided for parsing \n    these records workflow.",
+  "name": "grapho: R Session Recording",
+  "codeRepository": "https://github.com/warwickCIM/grapho",
+  "license": "https://spdx.org/licenses/MIT",
+  "version": "0.2.0",
+  "programmingLanguage": {
+    "@type": "ComputerLanguage",
+    "name": "R",
+    "url": "https://r-project.org"
+  },
+  "runtimePlatform": "R version 4.0.3 (2020-10-10)",
+  "softwareSuggestions": [],
+  "softwareRequirements": [
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "R",
+      "name": "R",
+      "version": ">= 4.0)\n  rstudioapi"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "digest",
+      "name": "digest",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=digest"
+    }
+  ],
+  "releaseNotes": "https://github.com/warwickCIM/grapho/blob/master/NEWS.md",
+  "readme": "https://github.com/WarwickCIM/grapho/blob/master/README.md",
+  "fileSize": "222.965KB",
+  "issueTracker": "https://github.com/warwickCIM/grapho/issues"
+}
