@@ -34,7 +34,6 @@ parse_grapho_archive <- function() {
     # select the different parts of the console log file name
     session_start_time <-
       as.POSIXct(logfile_parts[1], "%y%d%mT%H%M%S", tz = Sys.timezone())
-    user_id <- logfile_parts[3]
     session_id <- gsub(pattern = ".txt", replacement = "", x = logfile_parts[4])
 
     # load in file. Character vector one line per entry

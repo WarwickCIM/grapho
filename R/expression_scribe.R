@@ -21,6 +21,8 @@
 #' finishing are recorded by the \code{\link{error_scribe()}} function.
 expression_scribe <- function(top_level_expr, value, ok, visible) {
 
+  globalVariables("last.warning")
+
   if (exists("last.warning")) {
     # Get last warning
     warning <- last.warning # will be null if there have been no

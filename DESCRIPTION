@@ -4,7 +4,7 @@ Title: R Session Recording
 Version: 0.2.0
 Authors@R: c(
     person("James", "Tripp", , "james.tripp@warwick.ac.uk", "aut"),
-    person("Gregory", "McInerny", , role = "aut")
+    person("Gregory", "McInerny", , role = "aut"))
 Description: Grapho is an R package for recording the commands and 
     visualisations created in an R session. Functions are provided for parsing 
     these records workflow.

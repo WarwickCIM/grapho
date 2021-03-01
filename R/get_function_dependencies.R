@@ -12,6 +12,7 @@
 #'
 #'@returns Dataframe containing your package
 get_function_dependencies <- function() {
+  globalVariables("parse_commands")
 
   # get dataframe containing the commands in Grapho archive
   df <- parse_commands()
@@ -75,14 +76,12 @@ get_function_dependencies <- function() {
     message(paste0("The following packages must be installed to continue ",
                    paste(archive_packages[!package_matches], collapse = ",")))
 
-    packages_install <- FALSE
     install <-
       readline(prompt = "Would you like to install these packages (Y/N): ")
 
     if (install == "Y") { # install packages if required
       parsed_entry <- tryCatch({
         install.packages(archive_packages[!package_matches])
-        packages_installed <- TRUE
 
       }, warning = function(w) {
         cat("\n\n  WARNING when installing packages\n\n",

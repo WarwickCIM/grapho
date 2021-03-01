@@ -54,7 +54,7 @@ error_scribe <- function(error = geterrmessage()) {
   # Try to parse the retrieved lines
   # If we fail then go round again
   # NOTE: could be problematic if multiple lines run
-  while(length(last_command) == 0) {
+  while (length(last_command) == 0) {
 
     # Load in history from file
     these_lines <- tail(user_history, n = lines_to_retrieve)
@@ -105,7 +105,7 @@ error_scribe <- function(error = geterrmessage()) {
                  file = log_file,
                  append = TRUE)
 
-      base::cat("\n", "ERROR MESSAGE", 
+      base::cat("\n", "ERROR MESSAGE",
                 file = log_file, append = TRUE)
 
       base::cat("\n", unlist(error),

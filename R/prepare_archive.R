@@ -20,8 +20,6 @@ prepare_archive <- function() {
                                  "%y%d%mT%H%M%S"),
                                  "_grapho.zip")
 
-    datetime <- format(Sys.time(), "%y%d%mT%H%M%S")
-
     utils::zip(zipfile = zip_file_location, grapho_files, flags = "-qj")
 
     form_location <- "Form not created yet"
