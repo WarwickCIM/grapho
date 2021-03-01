@@ -14,7 +14,7 @@ BugReports: https://github.com/warwickCIM/grapho/issues
 Encoding: UTF-8
 LazyData: true
 Depends:
-  R (>= 4.0)
+  R (>= 4.0),
   rstudioapi,
   digest
 RoxygenNote: 7.1.1
