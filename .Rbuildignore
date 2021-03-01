@@ -2,3 +2,4 @@
 ^\.Rproj\.user$
 ^codemeta\.json$
 ^\.github$
+^README\.Rmd$

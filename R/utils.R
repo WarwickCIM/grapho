@@ -107,19 +107,19 @@ log_session_information <- function() {
       )
     )
   }, warning = function(w) {
-    cat("
+    message("
       Warning when trying to start save session information
           ",
         w
     )
   }, error = function(e) {
-    cat("
-      ERROR
-      We could not write session information file.
-      R returned the error message:
-          ",
-        e
-    )
+    #cat("
+    #  ERROR
+    #  We could not write session information file.
+    #  R returned the error message:
+    #      ",
+    #    e
+    #)
   }, finally = {
     # let user know the session information
     # has been saved
@@ -147,13 +147,13 @@ create_log_file <- function() {
   result <- tryCatch({
     file.create(Sys.getenv("GRAPHO_LOG_FILE"), showWarnings = TRUE)
   }, warning = function(w) {
-    cat("\n\n  WARNING when trying to log file\n\n",
+    message("\n\n  WARNING when trying to log file\n\n",
         w,
         "\n\n  We were trying to create the file\n",
         Sys.getenv("GRAPHO_LOG_FILE")
     )
   }, error = function(e) {
-    cat(
+    message(
       paste0("\n\n  ERROR\n\n  ",
              "We were unable to create a console log file.\n\n  ",
              "R returned the error message\n\n:
@@ -164,7 +164,7 @@ create_log_file <- function() {
         Sys.getenv("GRAPHO_LOG_FILE")
     )
   }, finally = {
-    cat("\n\n  We have created the file \n\n    ",
+    message("\n\n  We have created the file \n\n    ",
         Sys.getenv("GRAPHO_LOG_FILE"),
         "\n\n  and will log commands and errors there.\n\n",
         "  Running toggle_grapho will enable or disable logging.\n\n",

@@ -1,14 +1,14 @@
 .onLoad <- function(libname, pkgname) {
-  assign("grapho",
-         new.env(),
-         envir = parent.env(environment()))
+  #assign("grapho",
+  #       new.env(),
+  #       envir = parent.env(environment()))
 
-  introduce_grapho()
-  setup_grapho_folder()
-  log_session_information()
-  start_expression_scribe()
-  start_error_scribe()
-  create_log_file()
+  #introduce_grapho()
+  #setup_grapho_folder()
+  #log_session_information()
+  #start_expression_scribe()
+  #start_error_scribe()
+  #create_log_file()
 }
 
 #' @rdname introduce_grapho
@@ -17,7 +17,7 @@
 #' when Grapho is loaded.
 #' @export
 introduce_grapho <- function() {
-  cat("
+  message("
   Welcome to grapho.\n
   This package creates an archive of your R activity.
   We developed the package at the University of Warwick.
@@ -45,7 +45,7 @@ setup_grapho_folder <- function() {
   Sys.setenv(GRAPHO_FOLDER = grapho_folder_location)
   Sys.setenv(GRAPHO_PLOT_FILE_FORMAT = "png")
 
-  # Indicate if we are in RStudio
+  # Indicate if we aire in RStudio
   if (Sys.getenv("RSTUDIO") == 1) {
     Sys.setenv(GRAPHO_ENVIRONMENT = "RStudio")
   } else {
@@ -70,7 +70,7 @@ setup_grapho_folder <- function() {
     GRAPHO_USER_ID = substr(user_hash, 1, 40)
       )
 
-  cat(
+  message(
     paste0("\n\n  We will add your user id (shown below) to\n",
     "  files in your data archive.\n\n   "),
    substr(user_hash, 1, 40))
@@ -92,7 +92,7 @@ setup_grapho_folder <- function() {
 
   # Check if grapho folder exists
   if (file.exists(grapho_folder_location)) {
-    cat(
+    message(
       paste0("\n\n  You appear to have a grapho folder.\n\n",
       "  We will place new grapho data in\n   "),
     grapho_folder_location,
@@ -108,13 +108,13 @@ setup_grapho_folder <- function() {
     result <- tryCatch({
       dir.create(grapho_folder_location)
     }, warning = function(w) {
-      cat("\n\n  WARNING when trying to create grapho folder\n\n",
+      message("\n\n  WARNING when trying to create grapho folder\n\n",
           w,
           "\n\n  We were trying to create the folder\n",
           grapho_folder_location
           )
     }, error = function(e) {
-      cat(
+      message(
         paste0("\n\n  ERROR\n\n  ",
         "We were unable to create the grapho folder.\n\n ",
         " R returned the error message\n\n:")
@@ -125,7 +125,7 @@ setup_grapho_folder <- function() {
           grapho_folder_location
       )
     }, finally = {
-    cat("\n\n  Your date archive can be found at \n\n    ",
+    message("\n\n  Your date archive can be found at \n\n    ",
         grapho_folder_location,
         "\n\n  and will record your R history and visualisations.\n\n"
         )
@@ -150,13 +150,13 @@ start_expression_scribe <- function() {
   result <- tryCatch({
     base::addTaskCallback(expression_scribe, name = "expression_scribe")
   }, warning = function(w) {
-    cat("
+    message("
       Warning when trying to start the expression scribe
           ",
         w
         )
   }, error = function(e) {
-    cat("
+    message("
       ERROR
       We were unable to start the expression scribe
       R returned the error message:
@@ -190,13 +190,13 @@ start_error_scribe <- function() {
       }
     )
   }, warning = function(w) {
-    cat("
+    message("
       Warning when trying to start the error scribe
           ",
         w
     )
   }, error = function(e) {
-    cat("
+    message("
       ERROR
       We were unable to start the error scribe
       R returned the error message:

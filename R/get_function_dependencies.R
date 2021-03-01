@@ -12,7 +12,6 @@
 #'
 #'@returns Dataframe containing your package
 get_function_dependencies <- function() {
-  globalVariables("parse_commands")
 
   # get dataframe containing the commands in Grapho archive
   df <- parse_commands()

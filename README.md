@@ -1,35 +1,46 @@
-# Grapho
 
-[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# grapho
 
 <!-- badges: start -->
+
+[![Project Status: WIP – Initial development is in progress, but there
+has not yet been a stable, usable release suitable for the
+public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 [![R-CMD-check](https://github.com/WarwickCIM/grapho/workflows/R-CMD-check/badge.svg)](https://github.com/WarwickCIM/grapho/actions)
 <!-- badges: end -->
 
+Grapho is an R package for recording the commands and visualisations
+created in an R session. Functions are provided for parsing and
+visualising the user workflow.
 
+Grapho is part of [WAYS: What aren’t you
+seeing](https://www.turing.ac.uk/research/research-projects/ways-what-arent-you-seeing).
+The goal of this Turing funded research project is to ‘develop tools
+which enhance people’s capacity to visualise data, by letting them see
+what can and can’t be seen in the visualisation.’.
 
-## Introduction
+The version in this repository is currently under active development. A
+full release is forthcoming. Please see the roadmap for more details.
 
-Grapho is an R package for recording the commands and visualisations created in an R session. Functions are provided for parsing and visualising the user workflow.
-
-Grapho is part of [WAYS: What aren't you seeing](https://www.turing.ac.uk/research/research-projects/ways-what-arent-you-seeing). The goal of this Turing funded research project is to 'develop tools which enhance people’s capacity to visualise data, by letting them see what can and can’t be seen in the visualisation.'.
-
-The version in this repository is currently under active development. A full 
-release is forthcoming. Please see the roadmap for more details.
-
-The package is written by [Dr James Tripp](https://http://warwick.ac.uk/jamestripp) and [Dr Greg McInerny](https://warwick.ac.uk/fac/cross_fac/cim/people/greg-mcinerny/). Please contact [James](mailto:james.tripp@warwick.ac.uk) with any technical issues.
+The package is written by [Dr James
+Tripp](https://http://warwick.ac.uk/jamestripp) and [Dr Greg
+McInerny](https://warwick.ac.uk/fac/cross_fac/cim/people/greg-mcinerny/).
+Please contact [James](mailto:james.tripp@warwick.ac.uk) with any
+technical issues.
 
 ## Installation
 
-In R, install the remotes package.
+install the remotes package.
 
-```r
+``` r
 install.packages('remotes')
 ```
 
 Then install the grapho package from github:
 
-```r
+``` r
 remotes::install_github('warwickcim/grapho')
 ```
 
@@ -37,71 +48,74 @@ remotes::install_github('warwickcim/grapho')
 
 Grapho will start recording a session once loaded using either
 
-```r
+``` r
 require(grapho)
 ```
 
 or
 
-```r
+``` r
 library(grapho)
 ```
 
-which will display a message welcoming you to the Grapho package. Grapho will 
-now record your console commands, plots you create, errors and warnings.
+which will display a message welcoming you to the Grapho package. Grapho
+will now record your console commands, plots you create, errors and
+warnings.
 
-You can view the files created by the grapho package by going to your Grapho 
-folder location as shown in the introductory messages. Another way to get the 
-location of the grapho folder is by running the below.
+You can view the files created by the grapho package by going to your
+Grapho folder location as shown in the introductory messages. Another
+way to get the location of the grapho folder is by running the below.
 
-```r
+``` r
 Sys.getenv('GRAPHO_FOLDER')
 ```
 
-You can view a summary of the files contents of your grapho archive by running.
+You can view a summary of the files contents of your grapho archive by
+running.
 
-```r
+``` r
 parse_grapho_archive()
 ```
 
 You can stop and start grapho collecting data by running the command
 
-```r
+``` r
 toggle_grapho()
 ```
 
 ## Data submission
 
-Part of the WAYS research project is to examine your workflow. Part of that is 
-to collect anonymous data about your R session. If you wish to send us your 
-data then please run the R command
+Part of the WAYS research project is to examine your workflow. Part of
+that is to collect anonymous data about your R session. If you wish to
+send us your data then please run the R command
 
-```r
+``` r
 prepare_archive()
 ```
 
-which will zip up the files in your grapho archive, tell you the location of 
-the zip file and the location of the form for you to submit the zip files to.
+which will zip up the files in your grapho archive, tell you the
+location of the zip file and the location of the form for you to submit
+the zip files to.
 
 ## Data
 
-Your data is anonymous. Your files are identified with a session and user ID. 
-Both the session and user ID are shown when you load in grapho. You can also 
-view the current user ID by running
+Your data is anonymous. Your files are identified with a session and
+user ID. Both the session and user ID are shown when you load in grapho.
+You can also view the current user ID by running
 
-```r
+``` r
 Sys.getenv('GRAPHO_USER_ID')
 ```
 
 and get your current session ID by running the below.
 
-```r
+``` r
 Sys.getenv('GRAPHO_SESSION_ID')
 ```
 
 The user ID is generated by running
 
-```r
+``` r
 user_hash <- digest::digest(
   c(Sys.getenv('HOME'),
     Sys.getenv('LANG'),
@@ -114,13 +128,13 @@ Sys.setenv(
     )
 ```
 
-where a sha512 hash is generated from a combination of your home directory 
-location, system language and the version of R you are using. Your user ID is 
-the first 40 characters of the hash.
+where a sha512 hash is generated from a combination of your home
+directory location, system language and the version of R you are using.
+Your user ID is the first 40 characters of the hash.
 
-Your session ID is generated by running 
+Your session ID is generated by running
 
-```r
+``` r
 session_hash <- digest::digest(
   date(), algo = 'sha512'
 )
@@ -130,4 +144,5 @@ Sys.setenv(
 )
 ```
 
-which takes the first 40 characters of an SHA512 has of the current date.
+which takes the first 40 characters of an SHA512 has of the current
+date.

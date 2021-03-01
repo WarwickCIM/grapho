@@ -1,1 +1,6 @@
 exportPattern("^[[:alpha:]]+")
+import(digest)
+import(rstudioapi)
+import(grDevices)
+importFrom("utils", "find", "getParseData", "install.packages",
+                "installed.packages", "savehistory", "tail", "write.csv")

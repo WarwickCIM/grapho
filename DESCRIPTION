@@ -17,4 +17,6 @@ Depends:
   R (>= 4.0),
   rstudioapi,
   digest
+Imports:
+  grDevices
 RoxygenNote: 7.1.1
