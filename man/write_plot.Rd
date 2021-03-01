@@ -13,7 +13,7 @@ write_plot(folder = NULL)
 Creates a file containing the current
  plot into the grapho folder.
 The filename follows the convention time-userID-sessionID.
-The \code{rstudioapi}{\link{savePlotAsImage()}} is used if the function is
+The \code{\link[rstudioapi]{savePlotAsImage}()} is used if the function is
 run within RStudio. If the function is not run in RStudio then
-\code{grDevices}{\link{dev.copy()}} is used.
+\code{\link[grDevices]{dev.copy}()} is used.
 }

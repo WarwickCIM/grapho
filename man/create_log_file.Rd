@@ -7,7 +7,7 @@
 create_log_file()
 }
 \description{
-\code{\link{create_log_file()}} is run
+Run
  when Grapho is loaded. The log file is
 created and the user is shown the location of the Grapho log file.
 Grapho folder.

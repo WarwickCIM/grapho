@@ -25,11 +25,7 @@ to the Grapho directory and log file set in the environment variables
 GRAPHO_LOG_FILE and GRAPHO_FOLDER.
 }
 \details{
-The \code{\link{start_expression_scribe()}}
- function is run when the Grapho
-package is loaded and sets \code{\link{expression_scribe()}} as
-a task callback function - the
- \code{\link{expression_scribe()}} is run after every
+Run after every
 successful R console command. Errors which prevent a console command
-finishing are recorded by the \code{\link{error_scribe()}} function.
+finishing are recorded by the \code{\link{error_scribe}()} function.
 }

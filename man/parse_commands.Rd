@@ -11,16 +11,16 @@ Dataframe containing the token type, text, session ID, session time
 and time for elements of commands.
 }
 \description{
-\code{\link{parse_commands()}} goes through your Grapho archive and
+Goes through your Grapho archive and
 returns a summary of the R commands you have run.
 }
 \details{
-Running \code{\link{parse_commands()}} creates a Dataframe of your
-Grapho archive using the \code{\link{parse_grapho_archive()}} command.
+Creates a Dataframe of your
+Grapho archive using the \code{\link{parse_grapho_archive}()} command.
 Commands are extracted from this Dataframe and then each command in turn is
-passed to the \code{\link[utils]{getParseData()}} function which breaks down
+passed to the \code{\link[utils]{getParseData}()} function which breaks down
 the command into tokens such as SYMBOL_FUNCTION_ALL, SYMBOL, LEFT_ASSIGN, etc.
 Tokens of type SYMBOL_FUNCTION_ALL, SYMBOL, LEFT_ASSIGN are extracted from
-the output and labelled with the corresponding session id, sessions start time
+the output and labeled with the corresponding session id, sessions start time
 and time.
 }

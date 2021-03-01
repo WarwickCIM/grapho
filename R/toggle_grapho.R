@@ -1,16 +1,16 @@
 #' Toggles Grapho recording
 #'
-#' \code{\link{toggle_grapho()}} either stops or starts Grapho recording.
+#' Either stops or starts Grapho recording.
 #'
-#'@details Running \code{\link{toggle_grapho()}} will display either
+#'@details Displays either
 #'  'Grapho logging disabled'
 #'or 'Grapho logging enabled' to inform the user is the logging functionality
 #'of the Grapho package has been enabled or disabled. The enabling or disabling
 #'of Grapho will be recorded in the Grapho log file.
 #'
 #'Grapho logging is set by the environment variable 'GRAPHO_LOGGING'. The
-#'logging functionality in \code{\link{error_scribe()}} and
-#'  \code{\link{expression_scribe()}} will only be
+#'logging functionality in \code{\link{error_scribe}()} and
+#'  \code{\link{expression_scribe}()} will only be
 #'evaluated if GRAPHO_LOGGING is TRUE.
 toggle_grapho <- function() {
 

@@ -4,10 +4,11 @@
 #' @description Creates a file containing the current
 #'  plot into the grapho folder.
 #' The filename follows the convention time-userID-sessionID.
-#' The \code{rstudioapi}{\link{savePlotAsImage()}} is used if the function is
+#' The \code{\link[rstudioapi]{savePlotAsImage}()} is used if the function is
 #' run within RStudio. If the function is not run in RStudio then
-#' \code{grDevices}{\link{dev.copy()}} is used.
+#' \code{\link[grDevices]{dev.copy}()} is used.
 #' @export
+#' @import rstudioapi
 write_plot <- function(folder = NULL) {
   # write new plot to disk
   if (is.null(folder)) {
@@ -29,16 +30,16 @@ write_plot <- function(folder = NULL) {
     Sys.getenv("GRAPHO_ENVIRONMENT") == "RStudio"
 
   using_rstudiogd <-
-     attr(dev.cur(), "names") == "RStudioGD"
+     attr(grDevices::dev.cur(), "names") == "RStudioGD"
 
   # Use RStudio API
   if (is_rstudio & using_rstudiogd) {
 
     # Print out current plot
-    rstudioapi::savePlotAsImage(
+    savePlotAsImage(
       file = plot_file,
-      height = dev.size(units = "px")[2],
-      width = dev.size(units = "px")[1],
+      height = grDevices::dev.size(units = "px")[2],
+      width = grDevices::dev.size(units = "px")[1],
       format = Sys.getenv("GRAPHO_PLOT_FILE_FORMAT")
     )
 
@@ -48,22 +49,25 @@ write_plot <- function(folder = NULL) {
   if (!(is_rstudio & using_rstudiogd)) {
 
     # get current height and width
-    dev_height <- dev.size(units = "px")[2]
-    dev_width <- dev.size(units = "px")[1]
+    dev_height <- grDevices::dev.size(units = "px")[2]
+    dev_width <- grDevices::dev.size(units = "px")[1]
 
     # get currently file type for plots
     plot_format <- tolower(Sys.getenv("GRAPHO_PLOT_FILE_FORMAT"))
 
     # plot file format can be either jpg, png or svg
-    dev.copy(plot_format, plot_file, width = dev_width, height = dev_height)
+    grDevices::dev.copy(plot_format,
+                        plot_file,
+                        width = dev_width,
+                        height = dev_height)
 
-    dev.off()
+    grDevices::dev.off()
   }
 }
 
 #' @rdname create_filename
 #' @title Create filename
-#' @description \code{\link{create_filename()}} is used by
+#' @description Used by
 #'  Grapho when creating filenames and
 #' returns the a filename string which includes the datetime, session ID,
 #' user ID and filetype.
@@ -81,7 +85,7 @@ create_filename <- function(filetype) {
 
 #' @rdname log_session_information
 #' @title Logs session information
-#' @description \code{\link{log_session_information()}} is run when
+#' @description Run when
 #'  Grapho is loaded and
 #' records all of the R environment variables to a CSV file located in the
 #' Grapho folder.
@@ -97,7 +101,7 @@ log_session_information <- function() {
   )
 
   result <- tryCatch({
-    write.csv(
+    utils::write.csv(
       session_information,
       paste0(
         Sys.getenv("GRAPHO_FOLDER"),
@@ -131,7 +135,7 @@ log_session_information <- function() {
 
 #' @rdname create_log_file
 #' @title create_log_file
-#' @description \code{\link{create_log_file()}} is run
+#' @description Run
 #'  when Grapho is loaded. The log file is
 #' created and the user is shown the location of the Grapho log file.
 #' Grapho folder.

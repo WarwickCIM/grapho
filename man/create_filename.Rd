@@ -11,7 +11,7 @@ create_filename(filetype)
 returned filename string.}
 }
 \description{
-\code{\link{create_filename()}} is used by
+Used by
  Grapho when creating filenames and
 returns the a filename string which includes the datetime, session ID,
 user ID and filetype.

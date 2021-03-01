@@ -7,7 +7,7 @@
 log_session_information()
 }
 \description{
-\code{\link{log_session_information()}} is run when
+Run when
  Grapho is loaded and
 records all of the R environment variables to a CSV file located in the
 Grapho folder.

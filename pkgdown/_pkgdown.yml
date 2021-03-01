@@ -14,6 +14,7 @@ reference:
   - prepare_archive
   - parse_grapho_archive
   - parse_commands
+  - get_function_dependencies
 - title: "Controlling Grapho"
   desc: "Functions for controlling Grapho."
 - contents:
@@ -30,3 +31,4 @@ reference:
   - setup_grapho_folder
   - start_error_scribe
   - start_expression_scribe
+  - write_plot

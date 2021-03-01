@@ -4,13 +4,14 @@
 #' to the R console.
 #'
 #' @param error Error message. Default value is the output of
-#'  \code{\link[base]{geterrmessage()}}
+#' \code{\link[base]{geterrmessage}()}
 #' which returns the current error message.
 #'
 #' @details This function is called by the .zzz.R file run when the Grapho
 #' package is first loaded into R. The function
-#'  \code{\link{start_error_scribe()}} sets
-#' \code{\link{error_scribe()}} as the error handling function.
+#' \code{\link{start_error_scribe}()}
+#'  sets
+#' \code{\link{error_scribe}()} as the error handling function.
 error_scribe <- function(error = geterrmessage()) {
 
   # get last command the user ran
@@ -18,7 +19,7 @@ error_scribe <- function(error = geterrmessage()) {
 
   # try and save the users history to the temp file
   tryCatch({
-    savehistory(temp_file_location)
+    utils::savehistory(temp_file_location)
   }, warning = function(w) {
   }, error = function(e) {
     cat("Unable to create temporary history file. R returned the error:",
@@ -57,7 +58,7 @@ error_scribe <- function(error = geterrmessage()) {
   while (length(last_command) == 0) {
 
     # Load in history from file
-    these_lines <- tail(user_history, n = lines_to_retrieve)
+    these_lines <- utils::tail(user_history, n = lines_to_retrieve)
 
     # Try to parse retrieved lines
     # History commands will be empty if parse fails

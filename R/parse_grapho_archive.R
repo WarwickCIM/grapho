@@ -1,13 +1,13 @@
 #' Parses Grapho archive
 #'
-#' \code{\link{Parse_grapho_archive()}} reads the files
+#' Reads the files
 #'  in your Grapho archive and returns a
 #' structured overview of your activities.
 #'
 #'@return Dataframe containing the time, type and record for commands, errors,
 #'warnings and plots.
 #'
-#'@details The \code{\link{parse_grapho_archive()}} function
+#'@details The \code{\link{parse_grapho_archive}()} function
 #'  retrieves the locations of your
 #'Grapho archive. For each logfile the function parses the logfile contents
 #'retrieving the session ID, user ID, time, type and details of each event.

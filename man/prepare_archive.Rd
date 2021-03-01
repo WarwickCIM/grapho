@@ -7,7 +7,7 @@
 prepare_archive()
 }
 \description{
-\code{\link{prepare_archive()}} creates a zip archive of
+Creates a zip archive of
  all the files in the Grapho
 folder and prints out a message informing the user where to submit the
 zip archive.

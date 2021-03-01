@@ -7,7 +7,7 @@
 start_error_scribe()
 }
 \description{
-\code{\link{start_error_scribe()}} is run
+Run
  when Grapho is loaded and
 changes the error options to run the error scribe when an error occurs.
 }

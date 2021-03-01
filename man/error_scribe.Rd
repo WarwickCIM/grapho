@@ -8,7 +8,7 @@ error_scribe(error = geterrmessage())
 }
 \arguments{
 \item{error}{Error message. Default value is the output of
- \code{\link[base]{geterrmessage()}}
+\code{\link[base]{geterrmessage}()}
 which returns the current error message.}
 }
 \description{
@@ -18,6 +18,7 @@ to the R console.
 \details{
 This function is called by the .zzz.R file run when the Grapho
 package is first loaded into R. The function
- \code{\link{start_error_scribe()}} sets
-\code{\link{error_scribe()}} as the error handling function.
+\code{\link{start_error_scribe}()}
+ sets
+\code{\link{error_scribe}()} as the error handling function.
 }

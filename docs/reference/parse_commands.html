@@ -40,7 +40,7 @@
 
 
 <meta property="og:title" content="Parses commands from Grapho archive — parse_commands" />
-<meta property="og:description" content="parse_commands() goes through your Grapho archive and
+<meta property="og:description" content="Goes through your Grapho archive and
 returns a summary of the R commands you have run." />
 
 
@@ -118,7 +118,7 @@ returns a summary of the R commands you have run." />
     </div>
 
     <div class="ref-description">
-    <p><code>parse_commands()</code> goes through your Grapho archive and
+    <p>Goes through your Grapho archive and
 returns a summary of the R commands you have run.</p>
     </div>
 
@@ -131,13 +131,13 @@ returns a summary of the R commands you have run.</p>
 and time for elements of commands.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Running <code>parse_commands()</code> creates a Dataframe of your
-Grapho archive using the <code><a href='parse_grapho_archive.html'>parse_grapho_archive()</a></code> command.
+    <p>Creates a Dataframe of your
+Grapho archive using the <code><a href='parse_grapho_archive.html'>parse_grapho_archive</a>()</code> command.
 Commands are extracted from this Dataframe and then each command in turn is
-passed to the <code><a href='https://rdrr.io/r/utils/getParseData.html'>getParseData()</a></code> function which breaks down
+passed to the <code><a href='https://rdrr.io/r/utils/getParseData.html'>getParseData</a>()</code> function which breaks down
 the command into tokens such as SYMBOL_FUNCTION_ALL, SYMBOL, LEFT_ASSIGN, etc.
 Tokens of type SYMBOL_FUNCTION_ALL, SYMBOL, LEFT_ASSIGN are extracted from
-the output and labelled with the corresponding session id, sessions start time
+the output and labeled with the corresponding session id, sessions start time
 and time.</p>
 
   </div>
@@ -151,7 +151,7 @@ and time.</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by .</p>
+  <p>Developed by <a href='https://warwick.ac.uk/jamestripp'>James Tripp</a>, <a href='https://warwick.ac.uk/fac/cross_fac/cim/people/greg-mcinerny/'>Gregory McInerny</a>.</p>
 </div>
 
 <div class="pkgdown">

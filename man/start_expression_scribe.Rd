@@ -7,8 +7,7 @@
 start_expression_scribe()
 }
 \description{
-\code{\link{start_expression_scribe()}}
-is run when Grapho is loaded and
+Run when Grapho is loaded and
 adds the expression scribe as a task callback. Expression scribe will
 run when a command is sent to the R console.
 }

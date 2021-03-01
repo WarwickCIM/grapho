@@ -10,14 +10,14 @@ get_function_dependencies()
 Dataframe containing your package
 }
 \description{
-\code{\link{get_function_dependencies()}} helps the user to identify the
+Helps the user to identify the
 packages used grapho archive.
 }
 \details{
-Running \code{\link{get_function_dependencies()}} will read through
+Reads through
 your Grapho archive to identify the packages required in each session. If you
 do not have the packages installed then you
  will be prompted to do so. Finally,
 the package for each function is identified using the
-\code{{utils}\link{find()}} function.
+\code{\link[utils]{find}()} function.
 }

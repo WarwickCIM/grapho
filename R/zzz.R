@@ -1,14 +1,14 @@
 .onLoad <- function(libname, pkgname) {
-  #assign("grapho",
-  #       new.env(),
-  #       envir = parent.env(environment()))
+  assign("grapho",
+         new.env(),
+         envir = parent.env(environment()))
 
-  #introduce_grapho()
-  #setup_grapho_folder()
-  #log_session_information()
-  #start_expression_scribe()
-  #start_error_scribe()
-  #create_log_file()
+  introduce_grapho()
+  setup_grapho_folder()
+  log_session_information()
+  start_expression_scribe()
+  start_error_scribe()
+  create_log_file()
 }
 
 #' @rdname introduce_grapho
@@ -33,6 +33,7 @@ introduce_grapho <- function() {
 #' folder location and ID information as global variables. Runs
 #' when Grapho is loaded.
 #' @export
+#' @import digest
 setup_grapho_folder <- function() {
   home_folder <- Sys.getenv("HOME")
   grapho_folder_location <- paste0(home_folder, "/grapho_archive")
@@ -59,7 +60,7 @@ setup_grapho_folder <- function() {
   Sys.setenv(GRAPHO_VERBOSE = TRUE)
   # Unique user ID hash from home, language and platform
   # SHA1 is broken but good enough for our purposes
-  user_hash <- digest::digest(
+  user_hash <- digest(
     c(Sys.getenv("HOME"),
       Sys.getenv("LANG"),
       Sys.getenv("R_PLATFORM")),
@@ -135,20 +136,18 @@ setup_grapho_folder <- function() {
 
 #' @rdname start_expression_scribe
 #' @title Starts expression scribe
-#' @description \code{\link{start_expression_scribe()}}
-#' is run when Grapho is loaded and
+#' @description Run when Grapho is loaded and
 #' adds the expression scribe as a task callback. Expression scribe will
 #' run when a command is sent to the R console.
-#' @export
 start_expression_scribe <- function() {
 
   # remove any existing callbacks
-  while (base::is.element("expression_scribe", base::getTaskCallbackNames()))
-    base::removeTaskCallback("expression_scribe")
+  while (is.element("expression_scribe", getTaskCallbackNames()))
+    removeTaskCallback("expression_scribe")
 
   # Attempt to start expression scribe
   result <- tryCatch({
-    base::addTaskCallback(expression_scribe, name = "expression_scribe")
+    addTaskCallback(expression_scribe, name = "expression_scribe")
   }, warning = function(w) {
     message("
       Warning when trying to start the expression scribe
@@ -172,19 +171,19 @@ start_expression_scribe <- function() {
 
 #' @rdname start_error_scribe
 #' @title Starts error scribe
-#' @description \code{\link{start_error_scribe()}} is run
+#' @description Run
 #'  when Grapho is loaded and
 #' changes the error options to run the error scribe when an error occurs.
 #' @export
 start_error_scribe <- function() {
 
   # remove any existing callbacks
-  while (base::is.element("error_scribe", base::getTaskCallbackNames()))
-    base::removeTaskCallback("error_scribe")
+  while (is.element("error_scribe", getTaskCallbackNames()))
+    removeTaskCallback("error_scribe")
 
   # Attempt to start expression scribe
   result <- tryCatch({
-    base::options(
+    options(
       error = function(...) {
         error_scribe()
       }
@@ -204,8 +203,8 @@ start_error_scribe <- function() {
         e
     )
   }, finally = {
-    if (Sys.getenv("GRAPHO_VERBOSE")) {
-      message("Error scribe started")
-    }
+    # if (Sys.getenv("GRAPHO_VERBOSE")) {
+    #   message("Error scribe started")
+    # }
   })
 }

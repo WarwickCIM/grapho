@@ -1,14 +1,14 @@
 #' Tries to identify package dependencies
 #'
-#' \code{\link{get_function_dependencies()}} helps the user to identify the
+#' Helps the user to identify the
 #' packages used grapho archive.
 #'
-#'@details Running \code{\link{get_function_dependencies()}} will read through
+#'@details Reads through
 #'your Grapho archive to identify the packages required in each session. If you
 #'do not have the packages installed then you
 #'  will be prompted to do so. Finally,
 #' the package for each function is identified using the
-#' \code{{utils}\link{find()}} function.
+#' \code{\link[utils]{find}()} function.
 #'
 #'@returns Dataframe containing your package
 get_function_dependencies <- function() {
@@ -64,7 +64,7 @@ get_function_dependencies <- function() {
   ))
 
   # find if any packages user does not have installed
-  ip <- names(installed.packages()[, 1])
+  ip <- names(utils::installed.packages()[, 1])
   package_matches <- archive_packages %in% ip
 
   if (sum(!package_matches) == 0) { # if there are no missing packages
@@ -80,7 +80,8 @@ get_function_dependencies <- function() {
 
     if (install == "Y") { # install packages if required
       parsed_entry <- tryCatch({
-        install.packages(archive_packages[!package_matches])
+        utils::install.packages(
+          archive_packages[!package_matches])
 
       }, warning = function(w) {
         cat("\n\n  WARNING when installing packages\n\n",
@@ -121,7 +122,7 @@ get_function_dependencies <- function() {
         current_session$package[i] <- this_row$text[i]
       } else {
         package <- tryCatch({
-          find(this_row$text)
+          utils::find(this_row$text)
         }, warning = function(w) {
           "warning"
         }, error = function(e) {
