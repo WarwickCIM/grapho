@@ -5,7 +5,7 @@ Version: 0.2.0
 Authors@R: c(
     person("James", "Tripp", , "james.tripp@warwick.ac.uk", role = c("aut", "cre")),
     person("Gregory", "McInerny", , role = "aut"))
-Description: Grapho is an R package for recording the commands and 
+Description: An R package for recording the commands and 
     visualisations created in an R session. Functions are provided for parsing 
     these records workflow.
 License: MIT + file LICENSE
@@ -21,3 +21,7 @@ Imports:
   grDevices,
   utils
 RoxygenNote: 7.1.1
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
