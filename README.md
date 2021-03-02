@@ -9,6 +9,8 @@
 has not yet been a stable, usable release suitable for the
 public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 [![R-CMD-check](https://github.com/WarwickCIM/grapho/workflows/R-CMD-check/badge.svg)](https://github.com/WarwickCIM/grapho/actions)
+[![Codecov test
+coverage](https://codecov.io/gh/WarwickCIM/grapho/branch/master/graph/badge.svg)](https://codecov.io/gh/WarwickCIM/grapho?branch=master)
 <!-- badges: end -->
 
 Grapho is an R package for recording the commands and visualisations
