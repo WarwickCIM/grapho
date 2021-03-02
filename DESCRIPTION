@@ -16,7 +16,8 @@ LazyData: true
 Depends:
   R (>= 4.0),
   rstudioapi,
-  digest
+  digest,
+  svglite
 Imports:
   grDevices,
   utils
@@ -24,5 +25,7 @@ RoxygenNote: 7.1.1
 Suggests: 
     knitr,
     rmarkdown,
-    covr
+    covr,
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
+Config/testthat/edition: 3

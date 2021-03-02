@@ -4,7 +4,12 @@
 \alias{create_log_file}
 \title{create_log_file}
 \usage{
-create_log_file()
+create_log_file(return_location = FALSE, show_messages = TRUE)
+}
+\arguments{
+\item{return_location}{If TRUE then location of log file is returned}
+
+\item{show_messages}{If TRUE then message output displayed}
 }
 \description{
 Run
