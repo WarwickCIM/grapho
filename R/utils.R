@@ -13,7 +13,7 @@
 #' @return Plot file location string if echo_location argument is TRUE
 #' @export
 #' @import rstudioapi
-write_plot <- function(folder = NULL, format = 'jpg', return_location = FALSE) {
+write_plot <- function(folder = NULL, format = "jpg", return_location = FALSE) {
   # write new plot to disk
   if (is.null(folder)) {
     stop("Please provide a folder to write the file to")
@@ -70,7 +70,7 @@ write_plot <- function(folder = NULL, format = 'jpg', return_location = FALSE) {
 
   # return the location of the plot
   # if echo_location is TRUE
-  if(return_location) {
+  if (return_location) {
     return(plot_file)
   }
 }
@@ -95,31 +95,59 @@ create_filename <- function(filetype) {
 
 #' @rdname log_session_information
 #' @title Logs session information
+#' @param return_location If TRUE then location of session information
+#'  file is returned.
 #' @description Run when
 #'  Grapho is loaded and
 #' records all of the R environment variables to a CSV file located in the
 #' Grapho folder.
 #' @export
-log_session_information <- function() {
+log_session_information <- function(return_location = FALSE) {
   if (Sys.getenv("GRAPHO_VERBOSE")) {
     message("Logging Session Information")
   }
 
-  session_information <- cbind(
-    as.data.frame(c(version)),
-    t(as.data.frame(c(Sys.getenv())))
+  session_information_location <-
+    paste0(
+      Sys.getenv("GRAPHO_FOLDER"),
+      "/",
+      create_filename("sessionInformation"),
+      ".csv"
+  )
+
+  version_df <-
+    as.data.frame(unlist(R.version))
+
+  version_vars <- data.frame(
+    stringsAsFactors = FALSE,
+    var_name = row.names(version_df),
+    value = version_df$`unlist(R.version)`
+
+  )
+
+  env_vars <-
+    data.frame(
+      stringsAsFactors = FALSE,
+      var_name = c("LANG", "PATH", "R_HOME", "R_RD4PDF", "RSTUDIO"),
+      value = c(Sys.getenv("LANG"),
+                Sys.getenv("PATH"),
+                Sys.getenv("R_HOME"),
+                Sys.getenv("R_RD4PDF"),
+                Sys.getenv("RSTUDIO"))
+    )
+
+  vars <- rbind(
+    version_vars,
+    env_vars
   )
 
   result <- tryCatch({
     utils::write.csv(
-      session_information,
-      paste0(
-        Sys.getenv("GRAPHO_FOLDER"),
-        "/",
-        create_filename("sessionInformation"),
-        ".csv"
+      row.names = FALSE,
+      x = vars,
+      file = session_information_location,
+      fileEncoding = "UTF-8"
       )
-    )
   }, warning = function(w) {
     message("
       Warning when trying to start save session information
@@ -141,6 +169,10 @@ log_session_information <- function() {
       message("Session information saved")
     }
   })
+
+  if (return_location) {
+    session_information_location
+  }
 }
 
 #' @rdname create_log_file

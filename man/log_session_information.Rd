@@ -4,7 +4,11 @@
 \alias{log_session_information}
 \title{Logs session information}
 \usage{
-log_session_information()
+log_session_information(return_location = FALSE)
+}
+\arguments{
+\item{return_location}{If TRUE then location of session information
+file is returned.}
 }
 \description{
 Run when

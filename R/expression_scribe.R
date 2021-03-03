@@ -15,6 +15,7 @@
 #' @details Run after every
 #' successful R console command. Errors which prevent a console command
 #' finishing are recorded by the \code{\link{error_scribe}()} function.
+#' @export
 expression_scribe <- function(top_level_expr, value, ok, visible) {
 
   if (exists("last.warning")) {

@@ -2,6 +2,7 @@
 
 export(create_filename)
 export(create_log_file)
+export(expression_scribe)
 export(introduce_grapho)
 export(log_session_information)
 export(setup_grapho_folder)
