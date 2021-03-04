@@ -203,8 +203,5 @@ start_error_scribe <- function() {
         e
     )
   }, finally = {
-    # if (Sys.getenv("GRAPHO_VERBOSE")) {
-    #   message("Error scribe started")
-    # }
   })
 }

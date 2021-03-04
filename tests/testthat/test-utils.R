@@ -8,7 +8,7 @@ test_that("plots can be recorded and read in png", {
   library(png)
 
   # create a plot
-  plot(c(1,2,3))
+  plot(c(1, 2, 3))
 
   # get old plot file format
   old_plot_format <- Sys.getenv("GRAPHO_PLOT_FILE_FORMAT")
@@ -44,13 +44,13 @@ test_that("plots can be recorded and read in jpeg", {
   library(jpeg)
 
   # create a plot
-  plot(c(1,2,3))
+  plot(c(1, 2, 3))
 
   # get old plot file format
   old_plot_format <- Sys.getenv("GRAPHO_PLOT_FILE_FORMAT")
 
   # set plot format to svg
-  Sys.setenv(GRAPHO_PLOT_FILE_FORMAT = 'jpeg')
+  Sys.setenv(GRAPHO_PLOT_FILE_FORMAT = "jpeg")
 
   # write out plot to temporary directory
   tmp_dir <- tempdir()
@@ -82,7 +82,7 @@ test_that("create filename returns a filename", {
 })
 
 # log session information
-test_that('r version information is recorded and can be read back correctly', {
+test_that("r version information is recorded and can be read back correctly", {
   library(grapho)
 
   # past verbosity settings
@@ -92,7 +92,7 @@ test_that('r version information is recorded and can be read back correctly', {
   Sys.setenv(GRAPHO_VERBOSE = "FALSE")
 
   # Save old log file location
-  past_grapho_folder <- Sys.getenv('GRAPHO_FOLDER')
+  past_grapho_folder <- Sys.getenv("GRAPHO_FOLDER")
 
   # Set new temporary grapho folder
   new_grapho_folder <- tempdir()
@@ -101,7 +101,7 @@ test_that('r version information is recorded and can be read back correctly', {
   Sys.setenv(GRAPHO_FOLDER = new_grapho_folder)
 
   # Save session information to file
-  session_information_file_location <-
+  file_location <-
     log_session_information(return_location = TRUE)
 
   # Revert grapho folder to old location
@@ -112,8 +112,8 @@ test_that('r version information is recorded and can be read back correctly', {
 
   # read in file and cleanup
   log_data <- read.csv(
-    file = session_information_file_location,
-    fileEncoding = 'UTF-8')
+    file = file_location,
+    fileEncoding = "UTF-8")
 
   # Remove temporary log
   file.remove(session_information_file_location)
@@ -132,7 +132,7 @@ test_that('r version information is recorded and can be read back correctly', {
   env_vars <-
     data.frame(
       stringsAsFactors = FALSE,
-      var_name = c("LANG", "PATH", "R_HOME", "R_RD4PDF", 'RSTUDIO'),
+      var_name = c("LANG", "PATH", "R_HOME", "R_RD4PDF", "RSTUDIO"),
       value = c(Sys.getenv("LANG"),
                 Sys.getenv("PATH"),
                 Sys.getenv("R_HOME"),
@@ -150,7 +150,7 @@ test_that('r version information is recorded and can be read back correctly', {
 })
 
 # create_log_file
-test_that('Grapho log can be created', {
+test_that("Grapho log can be created", {
   log_file_location <- create_log_file(
     return_location = TRUE,
     show_messages = FALSE)
@@ -158,11 +158,11 @@ test_that('Grapho log can be created', {
 })
 
 # expression_scribe
-test_that('expression_scribe parsed and recorded correctly', {
+test_that("expression_scribe parsed and recorded correctly", {
   library(grapho)
 
   # Save old log file location
-  past_grapho_log_location <- Sys.getenv('GRAPHO_LOG_FILE')
+  past_grapho_log_location <- Sys.getenv("GRAPHO_LOG_FILE")
 
   # Set new temporary log file location
   log_file_location <- tempfile()
@@ -172,14 +172,16 @@ test_that('expression_scribe parsed and recorded correctly', {
   create_log_file()
 
   # Add entry to log file
-  expression_scribe(top_level_expr = expression('g <- 22'))
+  expression_scribe(
+    top_level_expr = expression("g <- 22")
+    )
 
   # Set log file location to old location
   Sys.setenv(GRAPHO_LOG_FILE = past_grapho_log_location)
 
   # read in file and cleanup
   log_data <- paste(readLines(log_file_location),
-                        collapse='\n')
+                        collapse = "\n")
 
   # Remove temporary log
   file.remove(log_file_location)

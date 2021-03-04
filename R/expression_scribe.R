@@ -32,9 +32,6 @@ expression_scribe <- function(top_level_expr, value, ok, visible) {
   if (Sys.getenv("GRAPHO_LOGGING")) {
 
     log_file <- Sys.getenv("GRAPHO_LOG_FILE")
-    # if (Sys.getenv("GRAPHO_VERBOSE")) {
-    #   message("Writing command to log file")
-    # }
 
     # Try and write capture command to file
     result <- tryCatch({
@@ -67,10 +64,6 @@ expression_scribe <- function(top_level_expr, value, ok, visible) {
     })
 
     if (!is.null(warning)) {#If there has been a warning
-
-      # if (Sys.getenv("GRAPHO_VERBOSE")) {
-      #   message("Writing warning message to log file")
-      # }
 
       result <- tryCatch({
         base::cat("\n",
@@ -105,31 +98,14 @@ expression_scribe <- function(top_level_expr, value, ok, visible) {
     devices_open <- length(grDevices::dev.list()) > 0
     recorded_plot_exists <- !is.null(grapho$recorded_plot)
 
-    # if (!devices_open) {
-    #   # write out message if verbose is on
-    #   if (Sys.getenv("GRAPHO_VERBOSE")) {
-    #     message("No plot devices found")
-    #   }
-    # }
-
     # if there is a plot device
     if (devices_open) {
-
-      # write out message if verbose is on
-      # if (Sys.getenv("GRAPHO_VERBOSE")) {
-      #   message("Plot device detected")
-      # }
 
       # record the current plot
       current_plot <- grDevices::recordPlot()
 
       # and if a recorded plot is in the grapho environment
       if (recorded_plot_exists) {
-
-        # write message if grapho is set to verbose
-        # if (Sys.getenv("GRAPHO_VERBOSE")) {
-        #   message("Checking if stored and current plot are the same")
-        # }
 
         # check if the recorded and current plot are identical
         is_different_plot <- !identical(current_plot,
@@ -138,13 +114,6 @@ expression_scribe <- function(top_level_expr, value, ok, visible) {
         # if we have a new plot
         if (is_different_plot) {
 
-          # write message if grapho is set to verbose
-          # if (Sys.getenv("GRAPHO_VERBOSE")) {
-          #   msg <-
-          #         "Plots are different so saving new plot in grapho environment"
-          #   message(msg)
-          # }
-
           # record new plot in grapho environment
           assign(x = "recorded_plot", envir = grapho, value = current_plot)
 
@@ -152,24 +121,10 @@ expression_scribe <- function(top_level_expr, value, ok, visible) {
           write_plot(folder = grapho_folder_location)
 
         }
-
-        # if the current and recorded plot are the same
-        if (!is_different_plot) {
-
-          # write message if grapho is set to verbose
-          # if (Sys.getenv("GRAPHO_VERBOSE")) {
-          #   message("Grapho stored plot and current plot are identical")
-          # }
-        }
       }
 
       # if grapho has not yet recorded a plot
       if (!recorded_plot_exists) {
-
-        # write message if grapho is set to verbose
-        # if (Sys.getenv("GRAPHO_VERBOSE")) {
-        #   message("Creating plot in grapho environment")
-        # }
 
         # record new plot in grapho environment
         assign(x = "recorded_plot", envir = grapho, value = current_plot)
