@@ -1,7 +1,8 @@
 ## TODO Write test for callback functionality
 ## TODO Write tests to compare raw raster to figure file on disk
 
-test_that("png image files are written", {
+# write_plot
+test_that("plots can be recorded and read in png", {
   # libraries
   library(grapho)
   library(png)
@@ -37,7 +38,7 @@ test_that("png image files are written", {
 
   expect_true(png_loaded_into_r)
 })
-test_that("jpeg image files are written", {
+test_that("plots can be recorded and read in jpeg", {
   # libraries
   library(grapho)
   library(jpeg)
@@ -73,41 +74,14 @@ test_that("jpeg image files are written", {
 
   expect_true(jpeg_loaded_into_r)
 })
-test_that('Grapho log can be created', {
-  log_file_location <- create_log_file(
-    return_location = TRUE,
-    show_messages = FALSE)
-  expect_true(file.exists(log_file_location))
+
+# create file name
+test_that("create filename returns a filename", {
+  filename <- create_filename("test")
+  expect_true(grepl("test", filename))
 })
-test_that('expression_scribe parsed and recorded correctly', {
-  library(grapho)
 
-  # Save old log file location
-  past_grapho_log_location <- Sys.getenv('GRAPHO_LOG_FILE')
-
-  # Set new temporary log file location
-  log_file_location <- tempfile()
-  Sys.setenv(GRAPHO_LOG_FILE = log_file_location)
-
-  # Create log file
-  create_log_file()
-
-  # Add entry to log file
-  expression_scribe(top_level_expr = expression('g <- 22'))
-
-  # Set log file location to old location
-  Sys.setenv(GRAPHO_LOG_FILE = past_grapho_log_location)
-
-  # read in file and cleanup
-  log_data <- paste(readLines(log_file_location),
-                        collapse='\n')
-
-  # Remove temporary log
-  file.remove(log_file_location)
-
-  # check command was recorded
-  expect_true(grepl("g <- 22", log_data))
-})
+# log session information
 test_that('r version information is recorded and can be read back correctly', {
   library(grapho)
 
@@ -174,6 +148,46 @@ test_that('r version information is recorded and can be read back correctly', {
   # check if information saved correctly
   expect_equal(log_data, vars)
 })
+
+# create_log_file
+test_that('Grapho log can be created', {
+  log_file_location <- create_log_file(
+    return_location = TRUE,
+    show_messages = FALSE)
+  expect_true(file.exists(log_file_location))
+})
+
+# expression_scribe
+test_that('expression_scribe parsed and recorded correctly', {
+  library(grapho)
+
+  # Save old log file location
+  past_grapho_log_location <- Sys.getenv('GRAPHO_LOG_FILE')
+
+  # Set new temporary log file location
+  log_file_location <- tempfile()
+  Sys.setenv(GRAPHO_LOG_FILE = log_file_location)
+
+  # Create log file
+  create_log_file()
+
+  # Add entry to log file
+  expression_scribe(top_level_expr = expression('g <- 22'))
+
+  # Set log file location to old location
+  Sys.setenv(GRAPHO_LOG_FILE = past_grapho_log_location)
+
+  # read in file and cleanup
+  log_data <- paste(readLines(log_file_location),
+                        collapse='\n')
+
+  # Remove temporary log
+  file.remove(log_file_location)
+
+  # check command was recorded
+  expect_true(grepl("g <- 22", log_data))
+})
+
 
 ## Parsing and processing grapho archive
 # grapho logs are read recorded correctly

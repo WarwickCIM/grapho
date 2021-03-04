@@ -4,12 +4,10 @@
 \alias{write_plot}
 \title{Saves the current plot to the grapho folder}
 \usage{
-write_plot(folder = NULL, format = "jpg", return_location = FALSE)
+write_plot(folder = NULL, return_location = FALSE)
 }
 \arguments{
 \item{folder}{folder to write plot into}
-
-\item{format}{file format of either 'jpg', 'png' or 'svg'}
 
 \item{return_location}{if TRUE then location of the plot on
 disk is returned.}
