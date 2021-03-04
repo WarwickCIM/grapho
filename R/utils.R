@@ -18,15 +18,19 @@ write_plot <- function(folder = NULL, return_location = FALSE) {
     stop("Please provide a folder to write the file to")
   }
 
+  plot_format <- tolower(Sys.getenv("GRAPHO_PLOT_FILE_FORMAT"))
+
+  format_png <- plot_format == "png"
+  format_jpeg <- plot_format == "jpeg"
+
+  if (!format_png & !format_jpeg) {
+    stop("Plot format setting not png or jpeg")
+  }
+
   # plot filename
   plot_file <- paste0(folder, "/",
                       create_filename("current_plot"), ".",
                       Sys.getenv("GRAPHO_PLOT_FILE_FORMAT"))
-
-  # write message if grapho is set to verbose
-  #if (Sys.getenv("GRAPHO_VERBOSE")) {
-  #  message(paste0("Saving plot to ", plot_file))
-  #}
 
   # are we in RStudio and current device is RStudio device?
   is_rstudio <-
@@ -43,7 +47,7 @@ write_plot <- function(folder = NULL, return_location = FALSE) {
       file = plot_file,
       height = grDevices::dev.size(units = "px")[2],
       width = grDevices::dev.size(units = "px")[1],
-      format = Sys.getenv("GRAPHO_PLOT_FILE_FORMAT")
+      format = plot_format
     )
 
   }

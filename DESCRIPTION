@@ -17,7 +17,8 @@ Depends:
   R (>= 4.0),
   rstudioapi,
   digest,
-  svglite
+  png,
+  jpeg
 Imports:
   grDevices,
   utils

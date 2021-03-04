@@ -1,55 +1,85 @@
 ## TODO Write test for callback functionality
 ## TODO Write tests to compare raw raster to figure file on disk
 
-## Plot figures
+test_that("png image files are written", {
+  # libraries
+  library(grapho)
+  library(png)
 
-# svg plots are correctly written
-# test_that('svg image files are written', {
-#   # load in grapho
-#   library(grapho)
-#
-#   # create a plot
-#   plot(c(1,2,3))
-#
-#   # get old plot file format
-#   old_plot_format <- Sys.getenv('GRAPHO_PLOT_FILE_FORMAT')
-#
-#   # set plot format to svg
-#   Sys.setenv(GRAPHO_PLOT_FILE_FORMAT = 'svg')
-#
-#   # write out plot to temporary directory
-#   tmp_dir <- tempdir()
-#
-#   plot_location <-
-#     write_plot(
-#     folder = tmp_dir,
-#     return_location = TRUE)
-#
-#   # test plot exists
-#   plot_exists <- file.exists(plot_location)
-#
-#   # cleanup
-#   file.remove(plot_location)
-#
-#   expect_true(plot_exists)
-#
-# })
+  # create a plot
+  plot(c(1,2,3))
 
-# jpg plot are successfully written
-# png plots are successfully written
+  # get old plot file format
+  old_plot_format <- Sys.getenv("GRAPHO_PLOT_FILE_FORMAT")
 
-## Text files
+  # set plot format to png
+  Sys.setenv(GRAPHO_PLOT_FILE_FORMAT = "png")
 
-# grapho log created
+  # write out plot to temporary directory
+  tmp_dir <- tempdir()
+
+  plot_location <-
+    write_plot(
+    folder = tmp_dir,
+    return_location = TRUE)
+
+  # try to read in the file using the png package
+  # returns TRUE if plot is read in
+  # returns FALSE on any error
+  png_loaded_into_r <-
+    tryCatch(
+      error = function(cnd) FALSE,
+      is.numeric(png::readPNG(plot_location))
+    )
+
+  # cleanup
+  file.remove(plot_location)
+
+  expect_true(png_loaded_into_r)
+})
+test_that("jpeg image files are written", {
+  # libraries
+  library(grapho)
+  library(jpeg)
+
+  # create a plot
+  plot(c(1,2,3))
+
+  # get old plot file format
+  old_plot_format <- Sys.getenv("GRAPHO_PLOT_FILE_FORMAT")
+
+  # set plot format to svg
+  Sys.setenv(GRAPHO_PLOT_FILE_FORMAT = 'jpeg')
+
+  # write out plot to temporary directory
+  tmp_dir <- tempdir()
+
+  plot_location <-
+    write_plot(
+      folder = tmp_dir,
+      return_location = TRUE)
+
+  # try to read in the file using the jpeg package
+  # returns TRUE if plot is read in
+  # returns FALSE on any error
+  jpeg_loaded_into_r <-
+    tryCatch(
+      error = function(cnd) FALSE,
+      is.numeric(jpeg::readJPEG(plot_location))
+    )
+
+  # cleanup
+  file.remove(plot_location)
+
+  expect_true(jpeg_loaded_into_r)
+})
 test_that('Grapho log can be created', {
   log_file_location <- create_log_file(
     return_location = TRUE,
     show_messages = FALSE)
   expect_true(file.exists(log_file_location))
 })
-
-# console commands are correctly recorded to the log
-test_that('expressions are parsed and recorded correctly', {
+test_that('expression_scribe parsed and recorded correctly', {
   library(grapho)
 
   # Save old log file location
@@ -78,8 +108,6 @@ test_that('expressions are parsed and recorded correctly', {
   # check command was recorded
   expect_true(grepl("g <- 22", log_data))
 })
-
-# version information is saved correctly
 test_that('r version information is recorded and can be read back correctly', {
   library(grapho)
 
@@ -152,26 +180,3 @@ test_that('r version information is recorded and can be read back correctly', {
 # grapho logs are correctly parsed
 # commands are parsed as expected
 # function dependencies are correctly identified
-
-# test_that("svg plots are saved accurately", {
-#
-#   # extract svg representation of plot
-#   library(svglite)
-#   my_plot <- svgstring()
-#   plot(rnorm(10))
-#   dev.off()
-#
-#   # create plot and save using
-#   temp_location <- tempdir()
-#   plot_location <- write_plot(
-#     folder = temp_location,
-#     format = 'svg',
-#     return_location = TRUE)
-#
-#
-#   svglite::
-#
-#   expect_equal(str_length("a"), 1)
-#   expect_equal(str_length("ab"), 2)
-#   expect_equal(str_length("abc"), 3)
-# })
