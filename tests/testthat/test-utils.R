@@ -1,9 +1,40 @@
 ## TODO Write test for callback functionality
-
+## TODO Write tests to compare raw raster to figure file on disk
 
 ## Plot figures
 
 # svg plots are correctly written
+# test_that('svg image files are written', {
+#   # load in grapho
+#   library(grapho)
+#
+#   # create a plot
+#   plot(c(1,2,3))
+#
+#   # get old plot file format
+#   old_plot_format <- Sys.getenv('GRAPHO_PLOT_FILE_FORMAT')
+#
+#   # set plot format to svg
+#   Sys.setenv(GRAPHO_PLOT_FILE_FORMAT = 'svg')
+#
+#   # write out plot to temporary directory
+#   tmp_dir <- tempdir()
+#
+#   plot_location <-
+#     write_plot(
+#     folder = tmp_dir,
+#     return_location = TRUE)
+#
+#   # test plot exists
+#   plot_exists <- file.exists(plot_location)
+#
+#   # cleanup
+#   file.remove(plot_location)
+#
+#   expect_true(plot_exists)
+#
+# })
+
 # jpg plot are successfully written
 # png plots are successfully written
 
@@ -117,7 +148,6 @@ test_that('r version information is recorded and can be read back correctly', {
 })
 
 ## Parsing and processing grapho archive
-
 # grapho logs are read recorded correctly
 # grapho logs are correctly parsed
 # commands are parsed as expected

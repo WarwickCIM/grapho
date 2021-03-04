@@ -1,7 +1,6 @@
 #' @rdname write_plot
 #' @title Saves the current plot to the grapho folder
 #' @param folder folder to write plot into
-#' @param format file format of either 'jpg', 'png' or 'svg'
 #' @param return_location if TRUE then location of the plot on
 #'  disk is returned.
 #' @description Creates a file containing the current
@@ -13,7 +12,7 @@
 #' @return Plot file location string if echo_location argument is TRUE
 #' @export
 #' @import rstudioapi
-write_plot <- function(folder = NULL, format = "jpg", return_location = FALSE) {
+write_plot <- function(folder = NULL, return_location = FALSE) {
   # write new plot to disk
   if (is.null(folder)) {
     stop("Please provide a folder to write the file to")
