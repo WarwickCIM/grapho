@@ -14,6 +14,7 @@
 #'For each plot the function compares hashes of each plot file to remove
 #'duplicates. The resulting dataframe offers a detailed overview
 #'  of ones session.
+#' @export
 parse_grapho_archive <- function() {
 
   grapho_folder_location <- Sys.getenv("GRAPHO_FOLDER")

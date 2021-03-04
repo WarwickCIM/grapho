@@ -1,0 +1,16 @@
+
+ ##------ Thu Mar  4 17:07:12 2021 ------##
+ COMMAND 
+library(grapho)
+
+ ##------ Thu Mar  4 17:07:32 2021 ------##
+ COMMAND 
+print("This is a test file")
+
+ ##------ Thu Mar  4 17:07:36 2021 ------##
+ COMMAND 
+g <- 22
+
+ ##------ Thu Mar  4 17:07:49 2021 ------##
+ COMMAND 
+message("So long and thanks for all the fish")

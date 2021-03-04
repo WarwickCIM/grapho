@@ -1,0 +1,28 @@
+
+ ##------ Thu Mar  4 17:08:06 2021 ------##
+ COMMAND 
+library(grapho)
+
+ ##------ Thu Mar  4 17:08:27 2021 ------##
+ COMMAND 
+plot(rnorm(1e+05))
+
+ ##------ Thu Mar  4 17:08:48 2021 ------##
+ COMMAND 
+library(xml2)
+
+ ##------ Thu Mar  4 17:08:52 2021 ------##
+ ERROR COMMAND 
+
+ library(xml)
+ ##------ Thu Mar  4 17:08:52 2021 ------##'
+ ERROR MESSAGE
+ Error in library(xml) : there is no package called ‘xml’
+
+ ##------ Thu Mar  4 17:09:29 2021 ------##
+ COMMAND 
+warning("Danger, Will Robinson")
+
+ ##------ Thu Mar  4 17:09:29 2021 ------##
+ WARNING
+ Danger, Will Robinson

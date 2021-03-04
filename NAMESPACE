@@ -2,9 +2,13 @@
 
 export(create_filename)
 export(create_log_file)
+export(error_scribe)
 export(expression_scribe)
+export(get_function_dependencies)
 export(introduce_grapho)
 export(log_session_information)
+export(parse_commands)
+export(parse_grapho_archive)
 export(setup_grapho_folder)
 export(start_error_scribe)
 export(write_plot)

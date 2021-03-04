@@ -11,10 +11,11 @@
 #' \code{\link[utils]{find}()} function.
 #'
 #'@returns Dataframe containing your package
+#'@export
 get_function_dependencies <- function() {
 
   # get dataframe containing the commands in Grapho archive
-  df <- parse_commands()
+  df <- parse_commands(commands_df = parse_grapho_archive())
 
   # pick out individual sessions.
   # Important as we need to recreate load order to ensure we have

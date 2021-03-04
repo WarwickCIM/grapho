@@ -2,6 +2,8 @@
 #'
 #' Goes through your Grapho archive and
 #' returns a summary of the R commands you have run.
+#' @param commands_df dataframe containing parsed commands
+#'  from \code{\link{parse_grapho_archive}()}
 #' @return Dataframe containing the token type, text, session ID, session time
 #' and time for elements of commands.
 #'
@@ -13,9 +15,13 @@
 #'Tokens of type SYMBOL_FUNCTION_ALL, SYMBOL, LEFT_ASSIGN are extracted from
 #'the output and labeled with the corresponding session id, sessions start time
 #'and time.
+#' @export
 
-parse_commands <- function() {
-  df <- parse_grapho_archive()
+parse_commands <- function(commands_df = NULL) {
+
+  if (is.null(commands_df)) {
+    stop("No commands_df passed to parse commands")
+  }
 
   # do not include errors or warnings
   commands <- df[

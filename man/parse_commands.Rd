@@ -4,7 +4,11 @@
 \alias{parse_commands}
 \title{Parses commands from Grapho archive}
 \usage{
-parse_commands()
+parse_commands(commands_df = NULL)
+}
+\arguments{
+\item{commands_df}{dataframe containing parsed commands
+from \code{\link{parse_grapho_archive}()}}
 }
 \value{
 Dataframe containing the token type, text, session ID, session time
