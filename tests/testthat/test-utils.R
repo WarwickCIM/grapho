@@ -116,7 +116,7 @@ test_that("r version information is recorded and can be read back correctly", {
     fileEncoding = "UTF-8")
 
   # Remove temporary log
-  file.remove(session_information_file_location)
+  file.remove(file_location)
 
   # get session information
   version_df <-

@@ -63,7 +63,7 @@ write_plot <- function(folder = NULL, return_location = FALSE) {
     plot_format <- tolower(Sys.getenv("GRAPHO_PLOT_FILE_FORMAT"))
 
     # plot file format can be either jpg, png or svg
-    grDevices::dev.copy(plot_format,
+    grDevices::dev.copy(eval(parse(text = plot_format)),
                         plot_file,
                         width = dev_width,
                         height = dev_height)
