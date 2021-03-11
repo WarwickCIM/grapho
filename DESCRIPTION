@@ -3,7 +3,9 @@ Type: Package
 Title: R Session Recording
 Version: 0.2.0
 Authors@R: c(
-    person("James", "Tripp", , "james.tripp@warwick.ac.uk", role = c("aut", "cre")),
+    person("James", "Tripp", , "james.tripp@warwick.ac.uk",
+    role = c("aut", "cre"),
+    comment = c(ORCID = "0000-0003-2471-3411")),
     person("Gregory", "McInerny", , role = "aut"))
 Description: An R package for recording the commands and 
     visualisations created in an R session. Functions are provided for parsing 
