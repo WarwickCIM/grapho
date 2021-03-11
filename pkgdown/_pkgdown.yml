@@ -6,7 +6,7 @@ authors:
 
 template:
   params:
-    bootswatch: flatly
+    bootswatch: lumen
 reference:
 - title: "Accessing your data"
   desc: "Functions for summarising, accessing and visualising your Grapho data."
