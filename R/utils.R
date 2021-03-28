@@ -1,82 +1,4 @@
-#' @rdname write_plot
-#' @title Saves the current plot to the grapho folder
-#' @param folder folder to write plot into
-#' @param return_location if TRUE then location of the plot on
-#'  disk is returned.
-#' @description Creates a file containing the current
-#'  plot into the grapho folder.
-#' The filename follows the convention time-userID-sessionID.
-#' The \code{\link[rstudioapi]{savePlotAsImage}()} is used if the function is
-#' run within RStudio. If the function is not run in RStudio then
-#' \code{\link[grDevices]{dev.copy}()} is used.
-#' @return Plot file location string if echo_location argument is TRUE
-#' @export
-#' @import rstudioapi
-write_plot <- function(folder = NULL, return_location = FALSE) {
-  # write new plot to disk
-  if (is.null(folder)) {
-    stop("Please provide a folder to write the file to")
-  }
-
-  plot_format <- tolower(Sys.getenv("GRAPHO_PLOT_FILE_FORMAT"))
-
-  format_png <- plot_format == "png"
-  format_jpeg <- plot_format == "jpeg"
-
-  if (!format_png & !format_jpeg) {
-    stop("Plot format setting not png or jpeg")
-  }
-
-  # plot filename
-  plot_file <- paste0(folder, "/",
-                      create_filename("current_plot"), ".",
-                      Sys.getenv("GRAPHO_PLOT_FILE_FORMAT"))
-
-  # are we in RStudio and current device is RStudio device?
-  is_rstudio <-
-    Sys.getenv("GRAPHO_ENVIRONMENT") == "RStudio"
-
-  using_rstudiogd <-
-     attr(grDevices::dev.cur(), "names") == "RStudioGD"
-
-  # Use RStudio API
-  if (is_rstudio & using_rstudiogd) {
-
-    # Print out current plot
-    savePlotAsImage(
-      file = plot_file,
-      height = grDevices::dev.size(units = "px")[2],
-      width = grDevices::dev.size(units = "px")[1],
-      format = plot_format
-    )
-
-  }
-
-  # Use base device
-  if (!(is_rstudio & using_rstudiogd)) {
-
-    # get current height and width
-    dev_height <- grDevices::dev.size(units = "px")[2]
-    dev_width <- grDevices::dev.size(units = "px")[1]
-
-    # get currently file type for plots
-    plot_format <- tolower(Sys.getenv("GRAPHO_PLOT_FILE_FORMAT"))
-
-    # plot file format can be either jpg, png or svg
-    grDevices::dev.copy(eval(parse(text = plot_format)),
-                        plot_file,
-                        width = dev_width,
-                        height = dev_height)
-
-    grDevices::dev.off()
-  }
-
-  # return the location of the plot
-  # if echo_location is TRUE
-  if (return_location) {
-    return(plot_file)
-  }
-}
+# Utility functions
 
 #' @rdname create_filename
 #' @title Create filename
@@ -96,140 +18,181 @@ create_filename <- function(filetype) {
   )
 }
 
-#' @rdname log_session_information
-#' @title Logs session information
-#' @param return_location If TRUE then location of session information
-#'  file is returned.
-#' @description Run when
-#'  Grapho is loaded and
-#' records all of the R environment variables to a CSV file located in the
-#' Grapho folder.
+#' @rdname setup_grapho_folder
+#' @title Setup Grapho folder
+#' @description Creates the Grapho folder, user and session IDs. Records the
+#' folder location and ID information as global variables. Runs
+#' when Grapho is loaded.
 #' @export
-log_session_information <- function(return_location = FALSE) {
-  if (Sys.getenv("GRAPHO_VERBOSE")) {
-    message("Logging Session Information")
+#' @import digest
+setup_grapho_folder <- function() {
+  home_folder <- Sys.getenv("HOME")
+  grapho_folder_location <- paste0(home_folder, "/grapho_archive")
+
+  ### Set environment variables
+  ### GRAPHO_FOLDER, GRAPHO_VERBOSE,
+  ### GRAPHO_USER_ID, GRAPHO_SESSION_ID,
+  ### GRAPHO_HISTORY_FILE, GRAPHO_ENVIRONMENT
+  ### GRAPHO_PLOT_FILE_FORMAT, GRAPHO_LOGGING
+  Sys.setenv(GRAPHO_FOLDER = grapho_folder_location)
+  Sys.setenv(GRAPHO_PLOT_FILE_FORMAT = "png")
+
+  # Indicate if we aire in RStudio
+  if (Sys.getenv("RSTUDIO") == 1) {
+    Sys.setenv(GRAPHO_ENVIRONMENT = "RStudio")
+  } else {
+    Sys.setenv(GRAPHO_ENVIRONMENT = "R")
   }
 
-  session_information_location <-
-    paste0(
-      Sys.getenv("GRAPHO_FOLDER"),
-      "/",
-      create_filename("sessionInformation"),
-      ".csv"
+  # Set grapho logging flag to on
+  Sys.setenv(GRAPHO_LOGGING = TRUE)
+
+  # Verbose messaging
+  Sys.setenv(GRAPHO_VERBOSE = TRUE)
+  # Unique user ID hash from home, language and platform
+  # SHA1 is broken but good enough for our purposes
+  user_hash <- digest(
+    c(Sys.getenv("HOME"),
+      Sys.getenv("LANG"),
+      Sys.getenv("R_PLATFORM")),
+    algo = "sha512"
   )
 
-  version_df <-
-    as.data.frame(unlist(R.version))
-
-  version_vars <- data.frame(
-    stringsAsFactors = FALSE,
-    var_name = row.names(version_df),
-    value = version_df$`unlist(R.version)`
-
-  )
-
-  env_vars <-
-    data.frame(
-      stringsAsFactors = FALSE,
-      var_name = c("LANG", "PATH", "R_HOME", "R_RD4PDF", "RSTUDIO"),
-      value = c(Sys.getenv("LANG"),
-                Sys.getenv("PATH"),
-                Sys.getenv("R_HOME"),
-                Sys.getenv("R_RD4PDF"),
-                Sys.getenv("RSTUDIO"))
-    )
-
-  vars <- rbind(
-    version_vars,
-    env_vars
-  )
-
-  result <- tryCatch({
-    utils::write.csv(
-      row.names = FALSE,
-      x = vars,
-      file = session_information_location,
-      fileEncoding = "UTF-8"
+  Sys.setenv(
+    GRAPHO_USER_ID = substr(user_hash, 1, 40)
       )
+
+  message(
+    paste0("\n\n  We will add your user id (shown below) to\n",
+    "  files in your data archive.\n\n   "),
+   substr(user_hash, 1, 40))
+
+  session_hash <- digest::digest(
+    date(), algo = "sha512"
+  )
+
+  Sys.setenv(
+    GRAPHO_SESSION_ID = substr(session_hash, 1, 40)
+  )
+
+  # History file location
+  Sys.setenv(
+    GRAPHO_LOG_FILE = paste0(grapho_folder_location, "/",
+                             create_filename("consolelog"),
+                             ".txt")
+  )
+
+  # Check if grapho folder exists
+  if (file.exists(grapho_folder_location)) {
+    message(
+      paste0("\n\n  You appear to have a grapho folder.\n\n",
+      "  We will place new grapho data in\n   "),
+    grapho_folder_location,
+    "\n\n  There are currently",
+    length(dir(grapho_folder_location)),
+    "files there.\n")
+  }
+
+  # Attempt to create grapho folder if
+  # it does not exist.
+  if (!file.exists(grapho_folder_location)) {
+    # Attempt to create grapho folder
+    result <- tryCatch({
+      dir.create(grapho_folder_location)
+    }, warning = function(w) {
+      message("\n\n  WARNING when trying to create grapho folder\n\n",
+          w,
+          "\n\n  We were trying to create the folder\n",
+          grapho_folder_location
+          )
+    }, error = function(e) {
+      message(
+        paste0("\n\n  ERROR\n\n  ",
+        "We were unable to create the grapho folder.\n\n ",
+        " R returned the error message\n\n:")
+          ,
+          e,
+          "\n\nYou may want to try reloading grapho or creating the directory\n
+          ",
+          grapho_folder_location
+      )
+    }, finally = {
+    message("\n\n  Your date archive can be found at \n\n    ",
+        grapho_folder_location,
+        "\n\n  and will record your R history and visualisations.\n\n"
+        )
+    })
+  }
+}
+
+#' @rdname start_expression_scribe
+#' @title Starts expression scribe
+#' @description Run when Grapho is loaded and
+#' adds the expression scribe as a task callback. Expression scribe will
+#' run when a command is sent to the R console.
+start_expression_scribe <- function() {
+
+  # remove any existing callbacks
+  while (is.element("expression_scribe", getTaskCallbackNames()))
+    removeTaskCallback("expression_scribe")
+
+  # Attempt to start expression scribe
+  result <- tryCatch({
+    addTaskCallback(expression_scribe, name = "expression_scribe")
   }, warning = function(w) {
     message("
-      Warning when trying to start save session information
+      Warning when trying to start the expression scribe
+          ",
+        w
+        )
+  }, error = function(e) {
+    message("
+      ERROR
+      We were unable to start the expression scribe
+      R returned the error message:
+          ",
+        e
+        )
+  }, finally = {
+    if (Sys.getenv("GRAPHO_VERBOSE")) {
+      message("Expression scribe started")
+      }
+    })
+}
+
+#' @rdname start_error_scribe
+#' @title Starts error scribe
+#' @description Run
+#'  when Grapho is loaded and
+#' changes the error options to run the error scribe when an error occurs.
+#' @export
+start_error_scribe <- function() {
+
+  # remove any existing callbacks
+  while (is.element("error_scribe", getTaskCallbackNames()))
+    removeTaskCallback("error_scribe")
+
+  # Attempt to start expression scribe
+  result <- tryCatch({
+    options(
+      error = function(...) {
+        error_scribe()
+      }
+    )
+  }, warning = function(w) {
+    message("
+      Warning when trying to start the error scribe
           ",
         w
     )
   }, error = function(e) {
-    #cat("
-    #  ERROR
-    #  We could not write session information file.
-    #  R returned the error message:
-    #      ",
-    #    e
-    #)
-  }, finally = {
-    # let user know the session information
-    # has been saved
-    if (Sys.getenv("GRAPHO_VERBOSE")) {
-      message("Session information saved")
-    }
-  })
-
-  if (return_location) {
-    session_information_location
-  }
-}
-
-#' @rdname create_log_file
-#' @title create_log_file
-#' @description Run
-#'  when Grapho is loaded. The log file is
-#' created and the user is shown the location of the Grapho log file.
-#' Grapho folder.
-#' @param return_location If TRUE then location of log file is returned
-#' @param show_messages If TRUE then message output displayed
-#' @export
-create_log_file <- function(return_location = FALSE, show_messages = TRUE) {
-
-  log_file_location <- Sys.getenv("GRAPHO_LOG_FILE")
-  verbose <- as.logical(Sys.getenv("GRAPHO_LOGGING"))
-
-  # Let user know logging is enabled
-  if (verbose & show_messages) {
-    cat("\n Grapho logging is on \n")
-  }
-
-  # attempt to create create log file
-  result <- tryCatch({
-    file.create(log_file_location, showWarnings = TRUE)
-  }, warning = function(w) {
-    message("\n\n  WARNING when trying to log file\n\n",
-        w,
-        "\n\n  We were trying to create the file\n",
-        log_file_location
-    )
-  }, error = function(e) {
-    message(
-      paste0("\n\n  ERROR\n\n  ",
-             "We were unable to create a console log file.\n\n  ",
-             "R returned the error message\n\n:
-          "),
-        e,
-        "\n\nWe tried to create the file\n
+    message("
+      ERROR
+      We were unable to start the error scribe
+      R returned the error message:
           ",
-      log_file_location
+        e
     )
   }, finally = {
-    if (show_messages) {
-      message("\n\n  We have created the file \n\n    ",
-              log_file_location,
-              "\n\n  and will log commands and errors there.\n\n",
-              "  Running toggle_grapho will enable or disable logging.\n\n",
-              "  Run prepare_archive() to compress your data ready \n\n",
-              "  for sending to the University of Warwick."
-      )
-    }
   })
-
-  if (return_location) {
-    log_file_location
-  }
 }
