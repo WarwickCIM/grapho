@@ -20,5 +20,9 @@ test_that("error scribe can be registered as a callback", {
     scribe_present <-
          any("expression_scribe" %in% getTaskCallbackNames())
 
+    # clear callback
+    while (is.element("error_scribe", getTaskCallbackNames()))
+        removeTaskCallback("error_scribe")
+
     expect_true(scribe_present)
 })
