@@ -4,7 +4,11 @@
 \alias{setup_grapho_folder}
 \title{Setup Grapho folder}
 \usage{
-setup_grapho_folder()
+setup_grapho_folder(grapho_folder_location = NULL)
+}
+\arguments{
+\item{grapho_folder_location}{specify folder location.
+Used for testing purposes.}
 }
 \description{
 Creates the Grapho folder, user and session IDs. Records the

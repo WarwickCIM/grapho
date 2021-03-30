@@ -12,13 +12,13 @@ test_that(" sample grapho file is parsed correctly", {
     load("test.RData")
 
     # parse the archive
-    parsed_folder <- parse_grapho_archive()
+    sample_parsed_folder <- parse_grapho_archive()
 
     # cleanup
     Sys.setenv(GRAPHO_FOLDER = past_grapho_folder)
 
     # check expected and prerecorded output is the same
     expect_identical(
-        test_parsed_archive,
+        sample_parsed_folder,
         parsed_folder)
 })

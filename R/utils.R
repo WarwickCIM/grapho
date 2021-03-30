@@ -23,9 +23,13 @@ create_filename <- function(filetype) {
 #' @description Creates the Grapho folder, user and session IDs. Records the
 #' folder location and ID information as global variables. Runs
 #' when Grapho is loaded.
+#' @param grapho_folder_location specify folder location.
+#'  Used for testing purposes.
 #' @export
 #' @import digest
-setup_grapho_folder <- function() {
+setup_grapho_folder <- function(
+    grapho_folder_location = NULL
+    ) {
   home_folder <- Sys.getenv("HOME")
   grapho_folder_location <- paste0(home_folder, "/grapho_archive")
 
@@ -123,6 +127,7 @@ setup_grapho_folder <- function() {
         )
     })
   }
+
 }
 
 #' @rdname start_expression_scribe
@@ -130,6 +135,7 @@ setup_grapho_folder <- function() {
 #' @description Run when Grapho is loaded and
 #' adds the expression scribe as a task callback. Expression scribe will
 #' run when a command is sent to the R console.
+#' @export
 start_expression_scribe <- function() {
 
   # remove any existing callbacks
@@ -167,10 +173,6 @@ start_expression_scribe <- function() {
 #' changes the error options to run the error scribe when an error occurs.
 #' @export
 start_error_scribe <- function() {
-
-  # remove any existing callbacks
-  while (is.element("error_scribe", getTaskCallbackNames()))
-    removeTaskCallback("error_scribe")
 
   # Attempt to start expression scribe
   result <- tryCatch({
