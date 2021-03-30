@@ -20,7 +20,7 @@ test_that("expression_scribe parsed and recorded correctly", {
   Sys.setenv(GRAPHO_LOG_FILE = past_grapho_log_location)
 
   # read in file and cleanup
-  log_data <- paste(readLines(log_file_location),
+  log_data <- paste(readLines(log_file_location, warn = FALSE),
                         collapse = "\n")
 
   # Remove temporary log

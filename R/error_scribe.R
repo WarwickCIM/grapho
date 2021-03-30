@@ -29,7 +29,7 @@ error_scribe <- function(error = geterrmessage()) {
 
   # try and read in the saved hisotry file
   user_history <- tryCatch({
-    readLines(temp_file_location)
+    readLines(temp_file_location, warn = FALSE)
   }, warning = function(w) {
   }, error = function(e) {
     cat("Unable to create temporary history file. R returned the error:",

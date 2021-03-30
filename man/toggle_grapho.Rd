@@ -4,7 +4,10 @@
 \alias{toggle_grapho}
 \title{Toggles Grapho recording}
 \usage{
-toggle_grapho()
+toggle_grapho(show_messages = TRUE)
+}
+\arguments{
+\item{show_messages}{If TRUE then message output displayed}
 }
 \description{
 Either stops or starts Grapho recording.

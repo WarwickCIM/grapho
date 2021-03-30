@@ -30,6 +30,10 @@ create_filename <- function(filetype) {
 setup_grapho_folder <- function(
     grapho_folder_location = NULL
     ) {
+
+  # check if we are in a test environment
+  test <- Sys.getenv("GRAPHO_TEST_ENVIRONMENT")
+
   home_folder <- Sys.getenv("HOME")
   grapho_folder_location <- paste0(home_folder, "/grapho_archive")
 
@@ -66,11 +70,12 @@ setup_grapho_folder <- function(
     GRAPHO_USER_ID = substr(user_hash, 1, 40)
       )
 
-  message(
-    paste0("\n\n  We will add your user id (shown below) to\n",
-    "  files in your data archive.\n\n   "),
-   substr(user_hash, 1, 40))
-
+  if (!is.null(test)){
+    message(
+      paste0("\n\n  We will add your user id (shown below) to\n",
+      "  files in your data archive.\n\n   "),
+    substr(user_hash, 1, 40))
+  }
   session_hash <- digest::digest(
     date(), algo = "sha512"
   )
@@ -88,13 +93,16 @@ setup_grapho_folder <- function(
 
   # Check if grapho folder exists
   if (file.exists(grapho_folder_location)) {
-    message(
-      paste0("\n\n  You appear to have a grapho folder.\n\n",
-      "  We will place new grapho data in\n   "),
-    grapho_folder_location,
-    "\n\n  There are currently",
-    length(dir(grapho_folder_location)),
-    "files there.\n")
+
+    if (is.null(test)) {
+      message(
+        paste0("\n\n  You appear to have a grapho folder.\n\n",
+        "  We will place new grapho data in\n   "),
+      grapho_folder_location,
+      "\n\n  There are currently",
+      length(dir(grapho_folder_location)),
+      "files there.\n")
+    }
   }
 
   # Attempt to create grapho folder if

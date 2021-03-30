@@ -6,14 +6,20 @@
 #' when Grapho is loaded.
 #' @export
 introduce_grapho <- function() {
-  message("
-  Welcome to grapho.\n
-  This package creates an archive of your R activity.
-  We developed the package at the University of Warwick.
 
-  For information about the project contact:
+  # check if we are in a test environment
+  test <- Sys.getenv("GRAPHO_TEST_ENVIRONMENT")
+
+  if (is.null(test)) {
+    message("
+    Welcome to grapho.\n
+    This package creates an archive of your R activity.
+    We developed the package at the University of Warwick.
+
+    For information about the project contact:
       Dr Greg McInerny (g.mcinerny@warwick.ac.uk)
       Dr James Tripp (james.tripp@warwick.ac.uk)")
+  }
 }
 
 #' @rdname print_welcome_message

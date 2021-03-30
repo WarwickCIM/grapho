@@ -2,6 +2,7 @@
 #'
 #' Either stops or starts Grapho recording.
 #'
+#'@param show_messages If TRUE then message output displayed
 #'@details Displays either
 #'  'Grapho logging disabled'
 #'or 'Grapho logging enabled' to inform the user is the logging functionality
@@ -12,15 +13,18 @@
 #'logging functionality in \code{\link{error_scribe}()} and
 #'  \code{\link{expression_scribe}()} will only be
 #'evaluated if GRAPHO_LOGGING is TRUE.
-toggle_grapho <- function() {
+toggle_grapho <- function(show_messages = TRUE) {
+
+  verbose <- as.logical(Sys.getenv("GRAPHO_LOGGING"))
 
   log_file <- Sys.getenv("GRAPHO_LOG_FILE")
 
   if (Sys.getenv("GRAPHO_LOGGING")) {
 
     Sys.setenv(GRAPHO_LOGGING = FALSE)
-    cat("\n\n  Grapho logging disabled \n\n")
-
+    if (verbose & show_messages) {
+      cat("\n\n  Grapho logging disabled \n\n")
+    }
     result <- tryCatch({
       base::cat("\n", paste0("##------ ",
                               date(), " ------##")
@@ -45,7 +49,9 @@ toggle_grapho <- function() {
     })
   } else {
     Sys.setenv(GRAPHO_LOGGING = TRUE)
-    cat("\n\n  Grapho logging enabled \n\n")
+    if (verbose & show_messages) {
+      cat("\n\n  Grapho logging enabled \n\n")
+    }
 
     result <- tryCatch({
       base::cat("\n",
