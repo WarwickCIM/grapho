@@ -1,4 +1,4 @@
-test_that(" sample grapho file is parsed correctly", {
+test_that(" we can correctly extract commands from grapho archive", {
     library(grapho)
 
     past_grapho_folder <- Sys.getenv("GRAPHO_FOLDER")
@@ -10,15 +10,17 @@ test_that(" sample grapho file is parsed correctly", {
 
     # load in test data
     load("test.RData")
+    load("parsed_commands.RData")
 
     # parse the archive
-    sample_parsed_folder <- parse_grapho_archive()
+    sample_parsed_commands <-
+     parse_commands(parsed_folder)
 
     # cleanup
     Sys.setenv(GRAPHO_FOLDER = past_grapho_folder)
 
     # check expected and prerecorded output is the same
     expect_identical(
-        sample_parsed_folder,
-        parsed_folder)
+        sample_parsed_commands,
+        parsed_commands)
 })

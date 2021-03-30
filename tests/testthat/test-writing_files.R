@@ -1,6 +1,3 @@
-## TODO Write test for callback functionality
-## TODO Write tests to compare raw raster to figure file on disk
-
 # write_plot
 test_that("plots can be recorded and read in png", {
   # libraries

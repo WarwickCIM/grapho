@@ -24,9 +24,9 @@ parse_commands <- function(commands_df = NULL) {
   }
 
   # do not include errors or warnings
-  commands <- df[
-    df$type == " COMMAND " &
-    df$type != " ERROR COMMAND ",
+  commands <- commands_df[
+    commands_df$type == " COMMAND " &
+    commands_df$type != " ERROR COMMAND ",
     ]
 
   # Go through each entry to keep the time
