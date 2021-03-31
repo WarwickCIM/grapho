@@ -1,6 +1,100 @@
 # functions related to updating or
 # saving configuration options
 
+#' @rdname check_for_config_file
+#' @title Check for grapho config file
+#' @description Creates config file is it is not present
+#' @export
+check_for_config_file <- function() {
+
+  # Set OS dependent config file folder
+  grapho_config_dir <- tools::R_user_dir("grapho", "config")
+
+  # use test location if set
+  test_location <- Sys.getenv("GRAPHO_TEST_CONFIG_DIR")
+  if (!is.null(test_location)) {
+    grapho_config_dir <- test_location
+  }
+
+  config_file_location <- paste0(grapho_config_dir, "/config.csv")
+
+  # write message if grapho is set to verbose
+  if (Sys.getenv("GRAPHO_VERBOSE")) {
+    message("Checking if grapho directory exists")
+  }
+  # Create the config directory if it does not exist
+  if (!dir.exists(grapho_config_dir)) {
+    dir.create(grapho_config_dir, recursive = TRUE)
+  }
+
+  # Check if there is a config file
+  config_file_present <- file.exists(config_file_location)
+
+  # if a config file exists
+  if (config_file_present) {
+    message(paste0("Config file found. Run show_config() ",
+    "to view your current config options"))
+  } else { # create config file
+    message("Config file not found. Creating config file.")
+    write.csv(
+      fileEncoding = "UTF-8",
+      row.names = FALSE,
+      x = data.frame(
+        date = character(),
+        options = character(),
+        value = character()
+      ),
+      file = config_file_location
+    )
+  }
+}
+
+#' @rdname read_config_file
+#' @title Attempts to read the config file
+#' @description Config file is loaded in, the attempted load location is echoed
+#' and a Dataframe containing the contents of the config file is returned
+#' @param print_location If TRUE then config file location is also printed
+#' @return Dataframe containing the grapho configuration record
+#' @export
+read_config_file <- function(print_location = FALSE) {
+  grapho_config_dir <- tools::R_user_dir("grapho", "config")
+
+  # use test location if set
+  test_location <- Sys.getenv("GRAPHO_TEST_CONFIG_DIR")
+  if (!is.null(test_location)) {
+    grapho_config_dir <- test_location
+  }
+
+  config_file_location <- paste0(grapho_config_dir, "/config.csv")
+
+  if (print_location) {
+    message(paste("Config file location is", config_file_location))
+  }
+
+  # write message if grapho is set to verbose
+  if (Sys.getenv("GRAPHO_VERBOSE")) {
+    message("Reading config file from disk")
+  }
+
+  # Try to load config file
+  grapho_config <- tryCatch({
+    read.csv(config_file_location, encoding = "UTF-8")
+  }, warning = function(w) {
+    cat("\n\n  WARNING when trying to read grapho config file\n\n",
+        w
+    )
+  }, error = function(e) {
+    cat("\n\n  ERROR\n\n  We were unable to read the grapho config file.\n\n
+          R returned the error message\n\n:
+        ",
+        e
+    )
+  }, finally = {
+  })
+
+  grapho_config
+}
+
 #' @rdname get_latest_settings
 #' @title Retrieves the latest config settings
 #' @description Loads in the current config file by
@@ -68,86 +162,6 @@ get_latest_settings <- function() {
 
 }
 
-#' @rdname check_for_config_file
-#' @title Check for grapho config file
-#' @description Creates config file is it is not present
-#' @export
-check_for_config_file <- function() {
-
-  # Set OS dependent config file location
-  grapho_config_dir <- tools::R_user_dir("grapho", "config")
-  config_file_location <- paste0(grapho_config_dir, "/config.csv")
-
-  # write message if grapho is set to verbose
-  if (Sys.getenv("GRAPHO_VERBOSE")) {
-    message("Checking if grapho firectory exists")
-  }
-  # Create the config directory if it does not exist
-  if (!dir.exists(grapho_config_dir)) {
-    dir.create(grapho_config_dir, recursive = TRUE)
-  }
-
-  # Check if there is a config file
-  config_file_present <- file.exists(config_file_location)
-
-  # if a config file exists
-  if (config_file_present) {
-    message(paste0("Config file found. Run show_config() ",
-    "to view your current config options"))
-  } else { # create config file
-    message("Config file not found. Creating config file.")
-    write.csv(
-      fileEncoding = "UTF-8",
-      row.names = FALSE,
-      x = data.frame(
-        date = character(),
-        options = character(),
-        value = character()
-      ),
-      file = config_file_location
-    )
-  }
-}
-
-#' @rdname read_config_file
-#' @title Attempts to read the config file
-#' @description Config file is loaded in, the attempted load location is echoed
-#' and a Dataframe containing the contents of the config file is returned
-#' @param print_location If TRUE then config file location is also printed
-#' @return Dataframe containing the grapho configuration record
-#' @export
-read_config_file <- function(print_location = FALSE) {
-  grapho_config_dir <- tools::R_user_dir("grapho", "config")
-  config_file_location <- paste0(grapho_config_dir, "/config.csv")
-
-  if (print_location) {
-    message(paste("Config file location is", config_file_location))
-  }
-
-  # write message if grapho is set to verbose
-  if (Sys.getenv("GRAPHO_VERBOSE")) {
-    message("Reading config file from disk")
-  }
-
-  # Try to load config file
-  grapho_config <- tryCatch({
-    read.csv(config_file_location, encoding = "UTF-8")
-  }, warning = function(w) {
-    cat("\n\n  WARNING when trying to read grapho config file\n\n",
-        w
-    )
-  }, error = function(e) {
-    cat("\n\n  ERROR\n\n  We were unable to read the grapho config file.\n\n
-          R returned the error message\n\n:
-        ",
-        e
-    )
-  }, finally = {
-  })
-
-  grapho_config
-}
-
 #' @rdname check_config_file_exists
 #' @title Checks if config file is present
 #' @description Attempts to load in config file and check suitable config
@@ -191,78 +205,6 @@ show_config <- function(console = FALSE) {
   } else { # print out config file
     print(grapho_config)
   }
-}
-
-#' @rdname write_config_file
-#' @title Writes values to the grapho config file
-#' @param option Config option being changed.
-#'  Either 'folder' or 'file_format' are accepted
-#' @param value Value for new option e.g., folder location
-#' @description Config file is loaded and displayed
-#' @export
-write_config_file <- function(option = NULL, value = NULL) {
-
-  # write message if grapho is set to verbose
-  if (Sys.getenv("GRAPHO_VERBOSE")) {
-    message(paste0("Writing to config file. Option:", option, " Value:", value))
-  }
-
-  # Try to load the config file
-  grapho_config <- read_config_file()
-
-  # Get current time
-  timestamp <- Sys.time()
-
-  # Notify user if an option is not passed to function
-  if (is.null(option)) {
-    stop("Option missing. Cannot add new entry to config file.")
-  }
-
-  # Notify user if a value is not passed to function
-  if (is.null(value)) {
-    stop("Value missing. Cannot add new entry to config file.")
-  }
-
-  # Update config file
-  grapho_config <- rbind(
-    data.frame(
-      date = timestamp,
-      options = option,
-      value = value
-    ),
-    grapho_config
-  )
-
-  # Setup config file location
-  grapho_config_dir <- tools::R_user_dir("grapho", "config")
-  config_file_location <- paste0(grapho_config_dir, "/config.csv")
-
-  # write message if grapho is set to verbose
-  if (Sys.getenv("GRAPHO_VERBOSE")) {
-    message("Writing")
-  }
-
-  # Try and write out the config file
-  grapho_config <- tryCatch({
-    write.csv(
-      file = config_file_location,
-      x = grapho_config,
-      fileEncoding = "UTF-8",
-      row.names = FALSE
-    )
-
-  }, warning = function(w) {
-    cat("\n\n  WARNING when trying to read grapho config file\n\n",
-        w
-    )
-  }, error = function(e) {
-    cat("\n\n  ERROR\n\n  We were unable to read the grapho config file.\n\n
-          R returned the error message\n\n:
-        ",
-        e
-    )
-  }, finally = {
-  })
 }
 
 #' @rdname write_config
@@ -339,7 +281,7 @@ write_folder_location <- function(folder = NULL) {
     stop("No folder location specified")
   }
 
-  is_writable <- check_if_folder_is_writable()
+  is_writable <- check_if_folder_is_writable(folder)
 
   if (!is_writable) {
     stop("Unable to write to folder location")
@@ -365,7 +307,7 @@ write_folder_location <- function(folder = NULL) {
 write_verbosity <- function(verbosity = NULL) {
 
   # check if logical has been passed
-  if (!is.logical(verbose)) {
+  if (!is.logical(verbosity)) {
     stop("Verbosity argument is not a logical TRUE or FALSE value")
   }
 
@@ -375,10 +317,9 @@ write_verbosity <- function(verbosity = NULL) {
   }
 
   # Write new folder option to Grapho config file
-  write_config_file(option = "verbose", value = verbose)
+  write_config_file(option = "verbose", value = verbosity)
 }
 
-#HERE HERE HERE THIS NEEDS TO BE SORTED
 #' @rdname write_plot_file_format
 #' @title Write verbostiy setting
 #' @param plot_file_format file format of
@@ -388,21 +329,21 @@ write_verbosity <- function(verbosity = NULL) {
 write_plot_file_format <- function(plot_file_format = NULL) {
 
   # Check if file format data type
-  if (is.null(file_format)) {
+  if (is.null(plot_file_format)) {
     stop("No plot file format provided.")
   }
 
-  if (!is.character(file_format)) {
+  if (!is.character(plot_file_format)) {
     stop("File format is not a character")
   }
 
-  file_format <- tolower(file_format)
+  plot_file_format <- tolower(plot_file_format)
 
   # TRUE if one of the possible file formats
   is_accepted_format <-
-    (file_format == "jpg") |
-    (file_format == "svg") |
-    (file_format == "png")
+    (plot_file_format == "jpg") |
+    (plot_file_format == "svg") |
+    (plot_file_format == "png")
 
   # error is incorrect format
   if (!is_accepted_format) {
@@ -417,7 +358,7 @@ write_plot_file_format <- function(plot_file_format = NULL) {
       }
 
     # write new folder option to Grapho config file
-    write_config_file(option = "plot_file_format", value = file_format)
+    write_config_file(option = "plot_file_format", value = plot_file_format)
   }
 
 }
@@ -471,4 +412,83 @@ set_config <- function(folder = NULL, file_format = NULL, verbose = NULL) {
   if (is.null(folder) & is.null(file_format) & is.null(verbose)) {
     stop("No folder, file format or verbose option provided")
   }
+}
+
+#' @rdname write_config_file
+#' @title Writes values to the grapho config file
+#' @param option Config option being changed.
+#'  Either 'folder' or 'file_format' are accepted
+#' @param value Value for new option e.g., folder location
+#' @description Config file is loaded and displayed
+#' @export
+write_config_file <- function(option = NULL, value = NULL) {
+
+  # write message if grapho is set to verbose
+  if (Sys.getenv("GRAPHO_VERBOSE")) {
+    message(paste0("Writing to config file. Option:", option, " Value:", value))
+  }
+
+  # Try to load the config file
+  grapho_config <- read_config_file()
+
+  # Get current time
+  timestamp <- Sys.time()
+
+  # Notify user if an option is not passed to function
+  if (is.null(option)) {
+    stop("Option missing. Cannot add new entry to config file.")
+  }
+
+  # Notify user if a value is not passed to function
+  if (is.null(value)) {
+    stop("Value missing. Cannot add new entry to config file.")
+  }
+
+  # Update config file
+  grapho_config <- rbind(
+    data.frame(
+      date = timestamp,
+      options = option,
+      value = value
+    ),
+    grapho_config
+  )
+
+  # Setup config file location
+  grapho_config_dir <- tools::R_user_dir("grapho", "config")
+
+  # use test location if set
+  test_location <- Sys.getenv("GRAPHO_TEST_CONFIG_DIR")
+  if (!is.null(test_location)) {
+    grapho_config_dir <- test_location
+  }
+
+  config_file_location <- paste0(grapho_config_dir, "/config.csv")
+
+  # write message if grapho is set to verbose
+  if (Sys.getenv("GRAPHO_VERBOSE")) {
+    message("Writing")
+  }
+
+  # Try and write out the config file
+  grapho_config <- tryCatch({
+    write.csv(
+      file = config_file_location,
+      x = grapho_config,
+      fileEncoding = "UTF-8",
+      row.names = FALSE
+    )
+
+  }, warning = function(w) {
+    cat("\n\n  WARNING when trying to read grapho config file\n\n",
+        w
+    )
+  }, error = function(e) {
+    cat("\n\n  ERROR\n\n  We were unable to read the grapho config file.\n\n
+          R returned the error message\n\n:
+        ",
+        e
+    )
+  }, finally = {
+  })
 }
