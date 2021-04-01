@@ -109,33 +109,8 @@ setup_grapho_folder <- function(
   # it does not exist.
   if (!file.exists(grapho_folder_location)) {
     # Attempt to create grapho folder
-    result <- tryCatch({
-      dir.create(grapho_folder_location)
-    }, warning = function(w) {
-      message("\n\n  WARNING when trying to create grapho folder\n\n",
-          w,
-          "\n\n  We were trying to create the folder\n",
-          grapho_folder_location
-          )
-    }, error = function(e) {
-      message(
-        paste0("\n\n  ERROR\n\n  ",
-        "We were unable to create the grapho folder.\n\n ",
-        " R returned the error message\n\n:")
-          ,
-          e,
-          "\n\nYou may want to try reloading grapho or creating the directory\n
-          ",
-          grapho_folder_location
-      )
-    }, finally = {
-    message("\n\n  Your date archive can be found at \n\n    ",
-        grapho_folder_location,
-        "\n\n  and will record your R history and visualisations.\n\n"
-        )
-    })
+    dir.create(grapho_folder_location)
   }
-
 }
 
 #' @rdname start_expression_scribe

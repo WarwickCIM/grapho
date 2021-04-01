@@ -1,22 +1,31 @@
 # functions related to updating or
 # saving configuration options
 
+#' @rdname check_config_file_exists
+#' @title Checks if config file is present
+#' @description Attempts to load in config file and check suitable config
+#'  can be read via the function \code{\link{get_latest_settings}()}
+#' @return list containing latest config file settings and a logical
+#'  indicating if there is a config file.
+#' @export
+check_config_file_exists <- function() {
+  latest_settings <- get_latest_settings()
+
+  list(
+    settings = latest_settings,
+    present = is.data.frame(latest_settings)
+  )
+}
+
 #' @rdname check_for_config_file
 #' @title Check for grapho config file
 #' @description Creates config file is it is not present
+#' @import tools
 #' @export
 check_for_config_file <- function() {
 
-  # Set OS dependent config file folder
+  config_file_location <- get_config_file_location()
   grapho_config_dir <- tools::R_user_dir("grapho", "config")
-
-  # use test location if set
-  test_location <- Sys.getenv("GRAPHO_TEST_CONFIG_DIR")
-  if (!is.null(test_location)) {
-    grapho_config_dir <- test_location
-  }
-
-  config_file_location <- paste0(grapho_config_dir, "/config.csv")
 
   # write message if grapho is set to verbose
   if (Sys.getenv("GRAPHO_VERBOSE")) {
@@ -47,6 +56,122 @@ check_for_config_file <- function() {
       file = config_file_location
     )
   }
+  config_file_present
+}
+
+#' @rdname check_if_folder_is_writable
+#' @title Find out if folder can be written to
+#' @param folder Folder to try and write to
+#' @description Tries to write a file into a folder.
+#' @return TRUE if folder is writable and false if folder cannot be written to
+#' @export
+check_if_folder_is_writable <- function(folder = NULL) {
+  # Check if folder passed
+  if (is.null(folder)) {
+    stop("No folder location specified")
+  }
+
+  # write message if verbose is set to on
+  if (Sys.getenv("GRAPHO_VERBOSE")) {
+    message(paste0("Attempting to write to ", folder))
+  }
+
+  # Check file location is writable by writing and then removing file
+  test_location <- paste0(folder, "test.csv")
+
+  # Function to try and write to location
+  test_write <- function() {
+    write.csv("test", test_location, fileEncoding = "UTF-8")
+    file.remove(test_location)
+  }
+
+  # Try to write and return TRUE is write is successful
+  test_write()
+}
+
+#' @rdname get_latest_settings
+#' @title Retrieves the latest config settings
+#' @description Loads in the current config file by
+#' calling read_config_file() and then returns
+#' the latest folder, plot_file_format and verbose option
+#' @return Dataframe containing latest options
+#' @export
+get_latest_settings <- function() {
+  # try to read config file
+  # function will error our if
+  # no config file found
+  config_file <- read_config_file()
+
+  # Turn date column into date object
+  config_file$date <-
+    as.POSIXct(config_file$date)
+
+  # Check if there are entries for all options.
+  # Stop and warn user if there are not.
+  if (sum(config_file$options == "folder") == 0) {
+    stop("No folder option in config file.")
+  }
+
+  if (sum(config_file$options == "plot_file_format") == 0) {
+    stop("No plot_file_folder option in config file.")
+  }
+
+  if (sum(config_file$options == "verbose") == 0) {
+    stop("No verbose option in config file.")
+  }
+
+  ## FINDING LATEST OPTIONS
+
+  # write message if grapho is set to verbose
+  if (Sys.getenv("GRAPHO_VERBOSE")) {
+    message("Finding most recent grapho folder")
+  }
+
+  folder_df <- config_file[config_file$options == "folder", ]
+  latest_folder <- folder_df[folder_df$date == max(folder_df$date), ]
+
+  # write message if grapho is set to verbose
+  if (Sys.getenv("GRAPHO_VERBOSE")) {
+    message("Finding most recent plot_file_format")
+  }
+
+  plot_file_df <- config_file[config_file$options == "plot_file_format", ]
+  latest_plot_file <-
+    plot_file_df[plot_file_df$date == max(plot_file_df$date), ]
+
+  # write message if grapho is set to verbose
+  if (Sys.getenv("GRAPHO_VERBOSE")) {
+    message("Finding most recent verbose setting")
+  }
+
+  verbose_df <- config_file[config_file$options == "verbose", ]
+  latest_verbose <- verbose_df[verbose_df$date == max(verbose_df$date), ]
+
+  # create dataframe returning latest options
+  rbind(
+    latest_folder,
+    latest_plot_file,
+    latest_verbose
+  )
+
+}
+
+#' @rdname get_config_file_location
+#' @title Retrieves the location of the config file
+#' @description Gets the config file location
+#' @return String config file location
+#' @export
+get_config_file_location <- function() {
+  grapho_config_dir <- tools::R_user_dir("grapho", "config")
+
+  # use test location if set
+  test_location <- Sys.getenv("GRAPHO_TEST_CONFIG_DIR")
+  if (length(test_location) > 1) {
+    grapho_config_dir <- test_location
+  }
+
+  paste0(grapho_config_dir, "/config.csv")
+
 }
 
 #' @rdname read_config_file
@@ -57,15 +182,8 @@ check_for_config_file <- function() {
 #' @return Dataframe containing the grapho configuration record
 #' @export
 read_config_file <- function(print_location = FALSE) {
-  grapho_config_dir <- tools::R_user_dir("grapho", "config")
 
-  # use test location if set
-  test_location <- Sys.getenv("GRAPHO_TEST_CONFIG_DIR")
-  if (!is.null(test_location)) {
-    grapho_config_dir <- test_location
-  }
-
-  config_file_location <- paste0(grapho_config_dir, "/config.csv")
+  config_file_location <- get_config_file_location()
 
   if (print_location) {
     message(paste("Config file location is", config_file_location))
@@ -77,106 +195,10 @@ read_config_file <- function(print_location = FALSE) {
   }
 
   # Try to load config file
-  grapho_config <- tryCatch({
-    read.csv(config_file_location, encoding = "UTF-8")
-  }, warning = function(w) {
-    cat("\n\n  WARNING when trying to read grapho config file\n\n",
-        w
-    )
-  }, error = function(e) {
-    cat("\n\n  ERROR\n\n  We were unable to read the grapho config file.\n\n
-          R returned the error message\n\n:
-        ",
-        e
-    )
-  }, finally = {
-  })
-
-  grapho_config
-}
-
-#' @rdname get_latest_settings
-#' @title Retrieves the latest config settings
-#' @description Loads in the current config file by
-#' calling read_config_file() and then returns
-#' the latest folder, plot_file_format and verbose option
-#' @return Dataframe containing latest options
-#' @export
-get_latest_settings <- function() {
-    # try to read config file
-    # function will error our if
-    # no config file found
-    config_file <- read_config_file()
-
-    # Turn date column into date object
-    config_file$date <-
-    as.POSIXct(config_file$date)
-
-    # Check if there are entries for all options.
-    # Stop and warn user if there are not.
-    if (sum(config_file$options == "folder") == 0) {
-    stop("No folder option in config file.")
-    }
-
-    if (sum(config_file$options == "plot_file_format") == 0) {
-    stop("No plot_file_folder option in config file.")
-    }
-
-    if (sum(config_file$options == "verbose") == 0) {
-    stop("No verbose option in config file.")
-    }
-
-    ## FINDING LATEST OPTIONS
-
-    # write message if grapho is set to verbose
-    if (Sys.getenv("GRAPHO_VERBOSE")) {
-    message("Finding most recent grapho folder")
-    }
-
-    folder_df <- config_file[config_file$options == "folder", ]
-    latest_folder <- folder_df[folder_df$date == max(folder_df$date), ]
-
-    # write message if grapho is set to verbose
-    if (Sys.getenv("GRAPHO_VERBOSE")) {
-    message("Finding most recent plot_file_format")
-    }
-
-    plot_file_df <- config_file[config_file$options == "plot_file_format", ]
-    latest_plot_file <-
-     plot_file_df[plot_file_df$date == max(plot_file_df$date), ]
-
-    # write message if grapho is set to verbose
-    if (Sys.getenv("GRAPHO_VERBOSE")) {
-    message("Finding most recent verbose setting")
-    }
-
-    verbose_df <- config_file[config_file$options == "verbose", ]
-    latest_verbose <- verbose_df[verbose_df$date == max(verbose_df$date), ]
-
-    # create dataframe returning latest options
-    rbind(
-    latest_folder,
-    latest_plot_file,
-    latest_verbose
-    )
+  read.csv(config_file_location, encoding = "UTF-8")
 
 }
 
-#' @rdname check_config_file_exists
-#' @title Checks if config file is present
-#' @description Attempts to load in config file and check suitable config
-#'  can be read via the function \code{\link{get_latest_settings}()}
-#' @return list containing latest config file settings and a logical
-#'  indicating if there is a config file.
-#' @export
-check_config_file_exists <- function() {
-  latest_settings <- get_latest_settings()
-
-  list(
-    settings = latest_settings,
-    check = is.data.frame(latest_settings)
-  )
-}
 
 #' @rdname show_config
 #' @title Print out config file
@@ -207,6 +229,122 @@ show_config <- function(console = FALSE) {
   }
 }
 
+
+
+#' @rdname set_config
+#' @title Updates folder location, plot file formats or verbosity of grapho
+#' @param folder Folder to save grapho records to
+#' @param file_format Preferred file format for graphics files. JPG, PNG,
+#'  SVG supported
+#' @param verbose If TRUE then additional grapho messages are displayed
+#'  in the terminal
+#' @description Configuration options for grapho are set in the config
+#' file and grapho global environment variables GRAPHO_FOLDER,
+#'  GRAPHO_PLOT_FILE_FORMAT and GRAPHO_VERBOSE. The function
+#'  \code{\link[base]{Sys.getenv}()} will print out all of
+#'  your environment variables.
+#' @export
+set_config <- function(folder = NULL, file_format = NULL, verbose = NULL) {
+
+  # check for config file
+  # creates a config file if needed
+  check_for_config_file()
+
+  # update folder
+  if (!is.null(folder)) {
+    # try to set folder option in config file
+    # this function will error if location is
+    # not writable
+    write_folder_location(folder = folder)
+
+    # set system environment
+    Sys.setenv(GRAPHO_FOLDER = folder)
+  }
+
+  # update file format
+  if (!is.null(file_format)) {
+    # try to set file format in config file
+    # this function errors out if file format
+    # is not png, jpg, or svg
+    write_plot_file_format(plot_file_format = file_format)
+
+    # set system environment
+    Sys.setenv(GRAPHO_PLOT_FILE_FORMAT = file_format)
+  }
+
+  # update verbosity
+  if (!is.null(verbose)) {
+    # try to set the verbosity option in the config file
+    # this function will error out if verbosity
+    # is not a logical
+    write_verbosity(verbosity = verbose)
+  }
+
+  # error out if no config option is provided
+  if (is.null(folder) & is.null(file_format) & is.null(verbose)) {
+    stop("No folder, file format or verbose option provided")
+  }
+}
+
+
+
+#' @rdname write_config_file
+#' @title Writes values to the grapho config file
+#' @param option Config option being changed.
+#'  Either 'folder' or 'file_format' are accepted
+#' @param value Value for new option e.g., folder location
+#' @description Config file is loaded and displayed
+#' @export
+write_config_file <- function(option = NULL, value = NULL) {
+
+  # write message if grapho is set to verbose
+  if (Sys.getenv("GRAPHO_VERBOSE")) {
+    message(paste0("Writing to config file. Option:", option, " Value:", value))
+  }
+
+  # Try to load the config file
+  grapho_config <- read_config_file()
+
+  # Get current time
+  timestamp <- Sys.time()
+
+  # Notify user if an option is not passed to function
+  if (is.null(option)) {
+    stop("Option missing. Cannot add new entry to config file.")
+  }
+
+  # Notify user if a value is not passed to function
+  if (is.null(value)) {
+    stop("Value missing. Cannot add new entry to config file.")
+  }
+
+  # Update config file
+  grapho_config <- rbind(
+    data.frame(
+      date = timestamp,
+      options = option,
+      value = value
+    ),
+    grapho_config
+  )
+
+  config_file_location <- get_config_file_location()
+
+  # write message if grapho is set to verbose
+  if (Sys.getenv("GRAPHO_VERBOSE")) {
+    message("Writing")
+  }
+
+  # Try and write out the config file
+  write.csv(
+    file = config_file_location,
+    x = grapho_config,
+    fileEncoding = "UTF-8",
+    row.names = FALSE
+  )
+}
+
+
 #' @rdname write_config
 #' @title Writes config setting to config file
 #' @param folder Folder to save grapho records to
@@ -225,49 +363,6 @@ write_config <- function(folder = NULL, file_format = NULL, verbose = NULL) {
 
   # write verbose option
 
-}
-
-#' @rdname check_if_folder_is_writable
-#' @title Find out if folder can be written to
-#' @param folder Folder to try and write to
-#' @description Tries to write a file into a folder.
-#' @return TRUE if folder is writable and false if folder cannot be written to
-#' @export
-check_if_folder_is_writable <- function(folder = NULL) {
-  # Check if folder passed
-  if (is.null(folder)) {
-    stop("No folder location specified")
-  }
-
-  # write message if verbose is set to on
-  if (Sys.getenv("GRAPHO_VERBOSE")) {
-    message(paste0("Attempting to write to ", folder))
-  }
-
-  # Check file location is writable by writing and then removing file
-  test_location <- paste0(folder, "test.csv")
-
-  # Function to try and write to location
-  test_write <- function() {
-    write.csv("test", test_location, fileEncoding = "UTF-8")
-    file.remove(test_location)
-  }
-
-  # write message if grapho is set to verbose
-  if (Sys.getenv("GRAPHO_VERBOSE")) {
-    message("Checking folder is writable")
-  }
-
-  # Try to write and return TRUE is write is successful
-  is_writable <- tryCatch({
-    test_write()
-  }, warning = function(w) {
-    FALSE
-  }, error = function(e) {
-    FALSE
-  })
-
-  is_writable
 }
 
 #' @rdname write_folder_location
@@ -313,7 +408,7 @@ write_verbosity <- function(verbosity = NULL) {
 
   # write message if grapho is set to verbose
   if (Sys.getenv("GRAPHO_VERBOSE")) {
-        message("Updating the verbosity of grapho")
+    message("Updating the verbosity of grapho")
   }
 
   # Write new folder option to Grapho config file
@@ -355,140 +450,10 @@ write_plot_file_format <- function(plot_file_format = NULL) {
     # write message if grapho is set to verbose
     if (Sys.getenv("GRAPHO_VERBOSE")) {
       message("Updating the plot file format")
-      }
+    }
 
     # write new folder option to Grapho config file
     write_config_file(option = "plot_file_format", value = plot_file_format)
   }
 
-}
-
-#' @rdname set_config
-#' @title Updates folder location, plot file formats or verbosity of grapho
-#' @param folder Folder to save grapho records to
-#' @param file_format Preferred file format for graphics files. JPG, PNG,
-#'  SVG supported
-#' @param verbose If TRUE then additional grapho messages are displayed
-#'  in the terminal
-#' @description Configuration options for grapho are set in the config
-#' file and grapho global environment variables GRAPHO_FOLDER,
-#'  GRAPHO_PLOT_FILE_FORMAT and GRAPHO_VERBOSE. The function
-#'  \code{\link[base]{Sys.getenv}()} will print out all of
-#'  your environment variables.
-#' @export
-set_config <- function(folder = NULL, file_format = NULL, verbose = NULL) {
-
-  # update folder
-  if (!is.null(folder)) {
-    # try to set folder option in config file
-    # this function will error if location is
-    # not writable
-    write_folder_location(folder = folder)
-
-    # set system environment
-    Sys.setenv(GRAPHO_FOLDER = folder)
-  }
-
-  # update file format
-  if (!is.null(file_format)) {
-    # try to set file format in config file
-    # this function errors out if file format
-    # is not png, jpg, or svg
-    write_plot_file_format(plot_file_format = file_format)
-
-    # set system environment
-    Sys.setenv(GRAPHO_PLOT_FILE_FORMAT = file_format)
-  }
-
-  # update verbosity
-  if (!is.null(verbose)) {
-    # try to set the verbosity option in the config file
-    # this function will error out if verbosity
-    # is not a logical
-    write_verbosity(verbosity = verbose)
-  }
-
-  # error out if no config option is provided
-  if (is.null(folder) & is.null(file_format) & is.null(verbose)) {
-    stop("No folder, file format or verbose option provided")
-  }
-}
-
-#' @rdname write_config_file
-#' @title Writes values to the grapho config file
-#' @param option Config option being changed.
-#'  Either 'folder' or 'file_format' are accepted
-#' @param value Value for new option e.g., folder location
-#' @description Config file is loaded and displayed
-#' @export
-write_config_file <- function(option = NULL, value = NULL) {
-
-  # write message if grapho is set to verbose
-  if (Sys.getenv("GRAPHO_VERBOSE")) {
-    message(paste0("Writing to config file. Option:", option, " Value:", value))
-  }
-
-  # Try to load the config file
-  grapho_config <- read_config_file()
-
-  # Get current time
-  timestamp <- Sys.time()
-
-  # Notify user if an option is not passed to function
-  if (is.null(option)) {
-    stop("Option missing. Cannot add new entry to config file.")
-  }
-
-  # Notify user if a value is not passed to function
-  if (is.null(value)) {
-    stop("Value missing. Cannot add new entry to config file.")
-  }
-
-  # Update config file
-  grapho_config <- rbind(
-    data.frame(
-      date = timestamp,
-      options = option,
-      value = value
-    ),
-    grapho_config
-  )
-
-  # Setup config file location
-  grapho_config_dir <- tools::R_user_dir("grapho", "config")
-
-  # use test location if set
-  test_location <- Sys.getenv("GRAPHO_TEST_CONFIG_DIR")
-  if (!is.null(test_location)) {
-    grapho_config_dir <- test_location
-  }
-
-  config_file_location <- paste0(grapho_config_dir, "/config.csv")
-
-  # write message if grapho is set to verbose
-  if (Sys.getenv("GRAPHO_VERBOSE")) {
-    message("Writing")
-  }
-
-  # Try and write out the config file
-  grapho_config <- tryCatch({
-    write.csv(
-      file = config_file_location,
-      x = grapho_config,
-      fileEncoding = "UTF-8",
-      row.names = FALSE
-    )
-
-  }, warning = function(w) {
-    cat("\n\n  WARNING when trying to read grapho config file\n\n",
-        w
-    )
-  }, error = function(e) {
-    cat("\n\n  ERROR\n\n  We were unable to read the grapho config file.\n\n
-          R returned the error message\n\n:
-        ",
-        e
-    )
-  }, finally = {
-  })
 }
