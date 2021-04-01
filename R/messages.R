@@ -25,9 +25,10 @@ introduce_grapho <- function() {
 #' @rdname print_welcome_message
 #' @title Welcome use to the grapho package
 #' @description Displays a welcome message introducing the user to grapho
+#' @param returning If TRUE message says welcome back
 #' @importFrom utils packageVersion
 #' @export
-print_welcome_message <- function() {
+print_welcome_message <- function(returning = TRUE) {
   # get timezone
   current_hour <- as.numeric(
     format(Sys.time(), "%H")
@@ -50,13 +51,12 @@ print_welcome_message <- function() {
     this_period <- "night"
   }
 
-  message(
-    paste0("Good ",
-           this_period,
-           ". Welcome to Grapho ",
-           utils::packageVersion("grapho"),
-           "."
-           )
-  )
+  if (returning) {
+    message("\nGood ", this_period, ". Welcome back to Grapho.\n")
+  } else {
+    message("\nGood ",this_period,
+            ". Welcome to Grapho ", utils::packageVersion("grapho"),
+            ".\n\nGrapho is research package written by\nJames Tripp and Gregory McInerny at the\nUniversity of Warwick.\n")
+  }
 
 }

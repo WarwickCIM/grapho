@@ -4,7 +4,8 @@
 #' @rdname check_config_file_exists
 #' @title Checks if config file is present
 #' @description Attempts to load in config file and check suitable config
-#'  can be read via the function \code{\link{get_latest_settings}()}
+#'  can be read via the function \code{\link{get_latest_settings}()}. Run
+#'  when package is loaded.
 #' @return list containing latest config file settings and a logical
 #'  indicating if there is a config file.
 #' @export
