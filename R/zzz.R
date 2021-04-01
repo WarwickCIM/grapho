@@ -6,12 +6,17 @@
   print_welcome_message()
 
   # check if there is a previous config file
-  #config_check <- check_config_file_exists()
+  config_check <- check_config_file_exists()
 
   # if there is a config file
-  #if (config_check$present) {
+  if (config_check$present) {
+    message('Found config file')
+  }
 
-  #}
+  # if there is no config file
+  if (!config_check$present) {
+    message('No config file!')
+  }
 
   # if there is a config file
   #     Tell user

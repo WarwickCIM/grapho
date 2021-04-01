@@ -158,36 +158,7 @@ create_log_file <- function(return_location = FALSE, show_messages = TRUE) {
   }
 
   # attempt to create create log file
-  result <- tryCatch({
-    file.create(log_file_location, showWarnings = TRUE)
-  }, warning = function(w) {
-    message("\n\n  WARNING when trying to log file\n\n",
-        w,
-        "\n\n  We were trying to create the file\n",
-        log_file_location
-    )
-  }, error = function(e) {
-    message(
-      paste0("\n\n  ERROR\n\n  ",
-             "We were unable to create a console log file.\n\n  ",
-             "R returned the error message\n\n:
-          "),
-        e,
-        "\n\nWe tried to create the file\n
-          ",
-      log_file_location
-    )
-  }, finally = {
-    if (show_messages) {
-      message("\n\n  We have created the file \n\n    ",
-              log_file_location,
-              "\n\n  and will log commands and errors there.\n\n",
-              "  Running toggle_grapho will enable or disable logging.\n\n",
-              "  Run prepare_archive() to compress your data ready \n\n",
-              "  for sending to the University of Warwick."
-      )
-    }
-  })
+  file.create(log_file_location, showWarnings = TRUE)
 
   if (return_location) {
     log_file_location

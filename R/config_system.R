@@ -21,11 +21,12 @@ check_config_file_exists <- function() {
 #' @title Check for grapho config file
 #' @description Creates config file is it is not present
 #' @importFrom tools R_user_dir
+#' @importFrom utils write.csv
 #' @export
 check_for_config_file <- function() {
 
   config_file_location <- get_config_file_location()
-  grapho_config_dir <- R_user_dir("grapho", "config")
+  grapho_config_dir <- tools::R_user_dir("grapho", "config")
 
   # Create the config directory if it does not exist
   if (!dir.exists(grapho_config_dir)) {
@@ -60,6 +61,7 @@ check_for_config_file <- function() {
 #' @param folder Folder to try and write to
 #' @description Tries to write a file into a folder.
 #' @return TRUE if folder is writable and false if folder cannot be written to
+#' @importFrom utils write.csv
 #' @export
 check_if_folder_is_writable <- function(folder = NULL) {
   # Check if folder passed
@@ -138,7 +140,7 @@ get_latest_settings <- function() {
 #' @importFrom tools R_user_dir
 #' @export
 get_config_file_location <- function() {
-  grapho_config_dir <- R_user_dir("grapho", "config")
+  grapho_config_dir <- tools::R_user_dir("grapho", "config")
 
   # use test location if set
   test_location <- Sys.getenv("GRAPHO_TEST_CONFIG_DIR")
@@ -156,6 +158,7 @@ get_config_file_location <- function() {
 #' and a Dataframe containing the contents of the config file is returned
 #' @param print_location If TRUE then config file location is also printed
 #' @return Dataframe containing the grapho configuration record
+#' @importFrom utils read.csv
 #' @export
 read_config_file <- function(print_location = FALSE) {
 
@@ -177,6 +180,7 @@ read_config_file <- function(print_location = FALSE) {
 #'  to the console if run in RStudio
 #' @description Config file is loaded using the function
 #' \code{\link{read_config_file}()} and displayed
+#' @importFrom utils View
 #' @export
 show_config <- function(console = FALSE) {
 
@@ -260,6 +264,7 @@ set_config <- function(folder = NULL, file_format = NULL, verbose = NULL) {
 #'  Either 'folder' or 'file_format' are accepted
 #' @param value Value for new option e.g., folder location
 #' @description Config file is loaded and displayed
+#' @importFrom utils write.csv
 #' @export
 write_config_file <- function(option = NULL, value = NULL) {
 

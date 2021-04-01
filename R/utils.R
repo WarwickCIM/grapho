@@ -70,7 +70,7 @@ setup_grapho_folder <- function(
     GRAPHO_USER_ID = substr(user_hash, 1, 40)
       )
 
-  if (!is.null(test)){
+  if (!is.null(test)) {
     message(
       paste0("\n\n  We will add your user id (shown below) to\n",
       "  files in your data archive.\n\n   "),
@@ -141,7 +141,7 @@ start_error_scribe <- function() {
   result <- tryCatch({
     options(
       error = function(...) {
-        error_scribe()
+        grapho::error_scribe()
       }
     )
   }, warning = function(w) {

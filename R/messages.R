@@ -25,6 +25,7 @@ introduce_grapho <- function() {
 #' @rdname print_welcome_message
 #' @title Welcome use to the grapho package
 #' @description Displays a welcome message introducing the user to grapho
+#' @importFrom utils packageVersion
 #' @export
 print_welcome_message <- function() {
   # get timezone
@@ -50,7 +51,12 @@ print_welcome_message <- function() {
   }
 
   message(
-    paste0("Good ", this_period, ". Welcome to the Grapho package.")
+    paste0("Good ",
+           this_period,
+           ". Welcome to Grapho ",
+           utils::packageVersion("grapho"),
+           "."
+           )
   )
 
 }

@@ -12,6 +12,7 @@
 #' \code{\link{start_error_scribe}()}
 #'  sets
 #' \code{\link{error_scribe}()} as the error handling function.
+#' @importFrom utils savehistory tail
 #' @export
 error_scribe <- function(error = geterrmessage()) {
 
@@ -19,22 +20,11 @@ error_scribe <- function(error = geterrmessage()) {
   temp_file_location <- tempfile()
 
   # try and save the users history to the temp file
-  tryCatch({
-    utils::savehistory(temp_file_location)
-  }, warning = function(w) {
-  }, error = function(e) {
-    cat("Unable to create temporary history file. R returned the error:",
-    e)
-  })
+  utils::savehistory(temp_file_location)
 
   # try and read in the saved hisotry file
-  user_history <- tryCatch({
+  user_history <-
     readLines(temp_file_location, warn = FALSE)
-  }, warning = function(w) {
-  }, error = function(e) {
-    cat("Unable to create temporary history file. R returned the error:",
-    e)
-  })
 
   # now we can remove the temporary file
   if (file.exists(temp_file_location)) {
@@ -73,7 +63,7 @@ error_scribe <- function(error = geterrmessage()) {
   if (Sys.getenv("GRAPHO_LOGGING")) {
 
     log_file <- Sys.getenv("GRAPHO_LOG_FILE")
-    
+
     result <- tryCatch({
 
       base::cat("\n", paste0("##------ ", date(), " ------##"),
