@@ -88,11 +88,9 @@ write_plot <- function(folder = NULL, return_location = FALSE) {
 #'  Grapho is loaded and
 #' records all of the R environment variables to a CSV file located in the
 #' Grapho folder.
+#' @importFrom utils write.csv write.table
 #' @export
 log_session_information <- function(return_location = FALSE) {
-  if (Sys.getenv("GRAPHO_VERBOSE")) {
-    message("Logging Session Information")
-  }
 
   session_information_location <-
     paste0(
@@ -128,34 +126,12 @@ log_session_information <- function(return_location = FALSE) {
     env_vars
   )
 
-  result <- tryCatch({
-    utils::write.csv(
-      row.names = FALSE,
-      x = vars,
-      file = session_information_location,
-      fileEncoding = "UTF-8"
-      )
-  }, warning = function(w) {
-    message("
-      Warning when trying to start save session information
-          ",
-        w
+  write.csv(
+    row.names = FALSE,
+    x = vars,
+    file = session_information_location,
+    fileEncoding = "UTF-8"
     )
-  }, error = function(e) {
-    #cat("
-    #  ERROR
-    #  We could not write session information file.
-    #  R returned the error message:
-    #      ",
-    #    e
-    #)
-  }, finally = {
-    # let user know the session information
-    # has been saved
-    if (Sys.getenv("GRAPHO_VERBOSE")) {
-      message("Session information saved")
-    }
-  })
 
   if (return_location) {
     session_information_location

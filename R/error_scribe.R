@@ -73,10 +73,7 @@ error_scribe <- function(error = geterrmessage()) {
   if (Sys.getenv("GRAPHO_LOGGING")) {
 
     log_file <- Sys.getenv("GRAPHO_LOG_FILE")
-    if (Sys.getenv("GRAPHO_VERBOSE")) {
-      message("Writing error command and error statment to log file")
-    }
-
+    
     result <- tryCatch({
 
       base::cat("\n", paste0("##------ ", date(), " ------##"),

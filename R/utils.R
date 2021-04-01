@@ -126,27 +126,7 @@ start_expression_scribe <- function() {
     removeTaskCallback("expression_scribe")
 
   # Attempt to start expression scribe
-  result <- tryCatch({
-    addTaskCallback(expression_scribe, name = "expression_scribe")
-  }, warning = function(w) {
-    message("
-      Warning when trying to start the expression scribe
-          ",
-        w
-        )
-  }, error = function(e) {
-    message("
-      ERROR
-      We were unable to start the expression scribe
-      R returned the error message:
-          ",
-        e
-        )
-  }, finally = {
-    if (Sys.getenv("GRAPHO_VERBOSE")) {
-      message("Expression scribe started")
-      }
-    })
+  addTaskCallback(expression_scribe, name = "expression_scribe")
 }
 
 #' @rdname start_error_scribe

@@ -22,15 +22,6 @@ introduce_grapho <- function() {
   }
 }
 
-#' @rdname introduce_grapho
-#' @title Introduce Grapho
-#' @description Prints out the first part of the Grapho welcome message. Runs
-#' when Grapho is loaded.
-#' @export
-print_config_found <- function(current_config) {
-  
-}
-
 #' @rdname print_welcome_message
 #' @title Welcome use to the grapho package
 #' @description Displays a welcome message introducing the user to grapho
