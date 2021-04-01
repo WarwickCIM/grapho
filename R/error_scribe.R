@@ -14,7 +14,7 @@
 #' \code{\link{error_scribe}()} as the error handling function.
 #' @export
 error_scribe <- function(error = geterrmessage()) {
- 
+
   # get last command the user ran
   temp_file_location <- tempfile()
 
