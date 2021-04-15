@@ -12,5 +12,6 @@ list containing latest config file settings and a logical
 }
 \description{
 Attempts to load in config file and check suitable config
- can be read via the function \code{\link{get_latest_settings}()}
+ can be read via the function \code{\link{get_latest_settings}()}. Run
+ when package is loaded.
 }

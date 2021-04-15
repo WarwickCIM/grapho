@@ -21,12 +21,17 @@ check_config_file_exists <- function() {
 #' @rdname check_for_config_file
 #' @title Check for grapho config file
 #' @description Creates config file is it is not present
+#' @param config_file_location Location of config file.
+#'  If no location passed then system default will be used.
 #' @importFrom tools R_user_dir
 #' @importFrom utils write.csv
 #' @export
-check_for_config_file <- function() {
+check_for_config_file <- function(config_file_location = NULL) {
 
-  config_file_location <- get_config_file_location()
+  if (is.null(config_file_location)) {
+    config_file_location <- get_config_file_location()
+  }
+
   grapho_config_dir <- tools::R_user_dir("grapho", "config")
 
   # Create the config directory if it does not exist

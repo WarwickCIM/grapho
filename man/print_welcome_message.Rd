@@ -4,7 +4,10 @@
 \alias{print_welcome_message}
 \title{Welcome use to the grapho package}
 \usage{
-print_welcome_message()
+print_welcome_message(returning = TRUE)
+}
+\arguments{
+\item{returning}{If TRUE message says welcome back}
 }
 \description{
 Displays a welcome message introducing the user to grapho

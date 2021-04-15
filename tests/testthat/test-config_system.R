@@ -9,7 +9,7 @@ test_that("config file correctly created by check_for_config_file", {
     Sys.setenv(GRAPHO_TEST_CONFIG_DIR = getwd())
 
     # check config file exists
-    check_for_config_file()
+    check_for_config_file(config_file_location)
 
     # find out if the config file has been created
     config_file <- file.exists(config_file_location)

@@ -4,7 +4,11 @@
 \alias{check_for_config_file}
 \title{Check for grapho config file}
 \usage{
-check_for_config_file()
+check_for_config_file(config_file_location = NULL)
+}
+\arguments{
+\item{config_file_location}{Location of config file.
+If no location passed then system default will be used.}
 }
 \description{
 Creates config file is it is not present
