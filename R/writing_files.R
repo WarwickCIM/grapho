@@ -153,9 +153,9 @@ create_log_file <- function(return_location = FALSE, show_messages = TRUE) {
   verbose <- as.logical(Sys.getenv("GRAPHO_LOGGING"))
 
   # Let user know logging is enabled
-  if (verbose & show_messages) {
-    cat("\n Grapho logging is on \n")
-  }
+  # if (verbose & show_messages) {
+  #   cat("\n Grapho logging is on \n")
+  # }
 
   # attempt to create create log file
   file.create(log_file_location, showWarnings = TRUE)
