@@ -35,7 +35,7 @@ expression_scribe <- function(top_level_expr, value, ok, visible) {
 
     # Try and write capture command to file
     result <- tryCatch({
-      command <- gsub(pattern = "     ",
+      command <- gsub(useBytes = TRUE, pattern = "     ",
                       replacement = "\n",
                       x = deparse(top_level_expr))
 

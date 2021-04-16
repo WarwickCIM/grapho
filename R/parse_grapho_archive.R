@@ -60,7 +60,7 @@ parse_grapho_archive <- function() {
       datestamp <- linn[entry_start]
 
       # Clean datestamp
-      datestamp <- gsub(
+      datestamp <- gsub(useBytes = TRUE,
         pattern = " ##------ ",
         replacement = "",
         x = gsub(
