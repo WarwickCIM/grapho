@@ -1,2 +1,2 @@
-utils::globalVariables("last.warning")
-utils::globalVariables("R_user_dir")
+# prevents warning by defining global variables
+utils::globalVariables(c(".grapho", "last.warning"))

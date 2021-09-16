@@ -1,0 +1,208 @@
+---
+title: "How Grapho works"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{How Grapho works}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Grapho records your R session activity including the code you send to the
+ console, warnings, errors and visualisations. Here we go through the
+ internals of the package in order to help you better understand a)
+ what data is being collected, b) the limitations of the package and
+ c) perhaps consider how one might extend or incorporate the functionality
+ of the package to meet your own needs.
+
+For any questions, please do contact 
+[James Tripp](mailto:james.tripp@warwick.ac.uk).
+
+# Onboarding
+
+When grapho is first started, the .onAttach function in zzz.R runs. The user
+ is welcomed to grapho and prompted to run the grapho_info function for
+ more information about the project. Then the internal load_past_state function
+ is run.
+ 
+Load_past_state tries to read in the previously saved grapho variables. The
+ variables are saved in an RDS file located in the grapho config directory.
+ The location of the config directory is returned by the R_user_dir function.
+
+```{r, eval=FALSE}
+tools::R_user_dir("grapho", "config")
+```
+
+The RDS file is loaded if it exists and the load_past_state function returns
+ TRUE. Otherwise we create the grapho variables and save them in an RDS file. 
+ The grapho variables are in a list found in the global environment.
+
+```{r, eval = FALSE}
+.GlobalEnv$.grapho
+```
+
+Next, the generate_ids() function creates the user and session ids.
+ Both ids are added to the .grapho list and are created using the 
+ first 40 characters of a sha512 hash. The user id is a hash of the home, 
+ lang and r_platform environment variables.
+
+```{r, include=FALSE}
+require(digest)
+```
+
+```{r}
+substr(digest::digest(
+  c(Sys.getenv("HOME"),
+    Sys.getenv("LANG"),
+    Sys.getenv("R_PLATFORM")),
+  algo = "sha512"
+),  1, 40)
+```
+
+The string sent to the hash cannot be derived from the hash itself. Furthermore,
+ we take a subset of the hash, to be on the safe side.
+ 
+The session ID is a hash of the date.
+
+```{r}
+substr(digest::digest(
+  date(), algo = "sha512"
+), 1, 40)
+```
+
+.onAttach() then displays different messages depending on the success of loading
+ the past RDS file. If there was an RDS file then the user is informed they can
+ view their current config settings by running the show_config() function,
+ otherwise the user is prompted to run the setup_grapho() function.
+ 
+Finally, .onAttach() enables the code and error recording functions. The
+ function expression_recorder is registered as a callback function which is
+ run each time code is sent to to the R interpreter. In order to record
+ errors we change options$error() to grapho::error_recorder. 
+ 
+# Grapho configuration
+
+Running the setup_grapho() function lets you set the .grapho variables.
+
+* **Grapho folder** - a choose folder window is shown after running the
+ function. In RStudio, we use the selectDirectory function from the RStudio
+ API. Otherwise, the tk_choose.dir function is used. The directory chosen 
+ becomes the current Grapho folder. All files created by grapho, except the
+ RDS file containing the grapho options, are placed in this folder. Older
+ grapho locations are also stored.
+ 
+* **Plot filetype** - a text interface presented using the menu function
+ from the utils package will prompt you to choose the file format grapho
+ should use for the visualisation files. The available formats are .png
+ .jpeg and .svg.
+ 
+* **Recording** - Finally, you will be asked if you want to start grapho
+ recording. You can toggle grapho recording on and off via the
+ toggle_grapho function.
+
+Grapho variables, such as the current and past grapho folders, the plot
+ filetype, the current log files and the if grapho is recording are
+ stored in an object names .grapho. The object, a list, is in the global
+ environment.
+ 
+You can view the raw list by typing .grapho into the console.
+
+```{r, include=FALSE}
+require(grapho)
+```
+
+```{r}
+.grapho
+```
+
+Or by using the pretty printing function.
+
+```{r}
+show_config()
+```
+
+# Recording commands and errors
+This section details how the functions which record your
+activity work. When you run a command the
+expression_recorder is run. If you encounter an error 
+then the error recorder is run.
+
+Grapho will only record your activity if Grapho recording
+is enabled. You can see the status of grapho by running.
+
+```{r}
+show_config()
+```
+
+You can switch recording on and off by running the 
+toggle_grapho function. Toggle grapho changes the 
+variable .grapho$config$recording to TRUE or FALSE, notifying
+you of the current state.
+
+## Expression_recorder
+
+The expression recorder has three jobs:
+
+* Write warnings to the log file
+* Write commands to the log file
+* Save any new plot in the current device to the grapho archive folder
+
+### Writing warnings and commands
+
+These three actions depend on the existence of a grapho archive.
+ If there is no archive then the user is prompted to run setup_grapho 
+ in order to create a grapho archive and the function exits.
+
+If there is a grapho archive location set then the function goes
+ about recording command and warnings. Commands are extracted by 
+ deparsing the top level expression passed to the function as 
+ part of the callback. Then the last warning is extracted using
+ the last.warning variable. Both the warning and command are
+ written out to the log file in the following format.
+
+ ```
+##------ Day Month Numerical day hour:minute:second year ------##
+ COMMAND 
+the deparsed command
+ ```
+
+or
+
+ ```
+##------ Day Month Numerical day hour:minute:second year ------##
+ WARNING 
+the warning message
+ ```
+### Writing out plots
+
+Grapho only writes out new plots in your current device. The most 
+recent plot is stored in the .grapho_plot variable in the global
+environment. After each command the current plot in the device 
+is compared to the most recent and if the plots are different then
+a plot file is written and the current plot is stored in .grapho_plot.
+
+We use the excellent grDevices::recordPlot() function to record plots. 
+Plots are written out via an internal function called write_plot. We 
+use the RStudio API, if available, or dev.copy.
+
+The created file has the same height and width as the active device, 
+with a file format as chosen via the setup_grapho function and with
+a filename generated by the internal create_filename function. The 
+create filename function generated filenames consisting of the
+systemtime, filetype and then the session and user id.
+
+```{r}
+create_filename <- function(filetype) {
+
+  paste0(
+    format(Sys.time(), "%y%d%mT%H%M%S"), "-",
+    filetype, "-",
+    .GlobalEnv$.grapho$ids$user_id, "-",
+    .GlobalEnv$.grapho$ids$session_id
+  )
+
+}
+
+create_filename("current_plot")
+```
+
+# Viewing and parsing your archive

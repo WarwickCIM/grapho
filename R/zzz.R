@@ -1,39 +1,200 @@
-.onLoad <- function(libname, pkgname) {
-  assign("grapho",
-         new.env(),
-         envir = parent.env(environment()))
+.onAttach <- function(libname, pkgname) {
+  packageStartupMessage(
+    paste0(
+      "Good ", get_salulatation(), " and welcome to grapho")
+  )
+  
+  packageStartupMessage(
+    "You can learn more about the package via the grapho_info() function")
 
-  # check if there is a previous config file
-  #config_check <- check_config_file_exists()
+  past_state_loaded <- load_past_state()
+  generate_ids()
 
-  # if there is a config file
-  #if (config_check$present) {
-  #  print_welcome_message(returning = TRUE)
-  #  message("Found config file")
-  #}
+  if (past_state_loaded) {
+    packageStartupMessage("Run show_config() to view your grapho configuration")
 
-  # if there is no config file
-  #if (!config_check$present) {
-  #  print_welcome_message(returning = FALSE)
-  #  message("No config file!")
-  #}
+    grapho_archive_location <- .GlobalEnv$.grapho$config$grapho_archive$current
 
-  # if there is a config file
-  #     Tell user
-  #     Welcome them back
-  #     Tell them how to check and change their config
-  #     Confirm log file created
-  #     Confirm expression scribe started
-  #     Confirm error scribe started
-  # if there is no config file
-  #     Tell user
-  #     Let them know a bit about the package
-  #
+    # create grapho archive if not exists
+    if (!dir.exists(grapho_archive_location)) {
+      dir.create(grapho_archive_location)
+    }
 
-  #introduce_grapho()
-  setup_grapho_folder()
-  log_session_information()
-  start_expression_scribe()
-  start_error_scribe()
-  create_log_file()
+    #create new log file
+    .GlobalEnv$.grapho$config$grapho_log_file <-
+      paste0(
+        grapho_archive_location,
+        "/",
+        create_filename("consolelog"),
+        ".txt"
+      )
+    file.create(.GlobalEnv$.grapho$config$grapho_log_file)
+    
+    # create random variable log file
+    .GlobalEnv$.grapho$config$grapho_random_log_file <-
+      paste0(
+        grapho_archive_location,
+        "/",
+        create_filename("random_consolelog"),
+        ".txt"
+      )
+    file.create(.GlobalEnv$.grapho$config$grapho_random_log_file)
+    
+    # create session variable name store - for random log file
+    .GlobalEnv$.grapho_variable_table <- data.frame(
+      var = character(),
+      var_rand = character()
+    )
+  } else {
+    packageStartupMessage("Run setup_grapho() to configure the grapho package")
+  }
+
+  # insert expression recorder
+  while (is.element("expression_recorder", getTaskCallbackNames()))
+    removeTaskCallback("expression_recorder")
+  addTaskCallback(expression_recorder, name = "expression_recorder")
+
+  # insert error recorder
+  options(
+    error = function(...) {
+      grapho::error_recorder()
+    }
+  )
+
+}
+
+#' @rdname generate_ids
+#' @title Creates session and user IDs then grapho savepaths.
+#' @import digest
+generate_ids <- function() {
+
+  .GlobalEnv$.grapho$ids <- list()
+
+  .GlobalEnv$.grapho$ids$user_id <-
+    substr(digest::digest(
+      c(Sys.getenv("HOME"),
+        Sys.getenv("LANG"),
+        Sys.getenv("R_PLATFORM")),
+      algo = "sha512"
+    ),  1, 40)
+
+  .GlobalEnv$.grapho$ids$session_id <-
+    substr(digest::digest(
+      date(), algo = "sha512"
+    ), 1, 40)
+
+  save_grapho_state()
+}
+
+load_past_state <- function(){
+  
+  grapho_config_folder <- 
+    tools::R_user_dir("grapho", "config")
+  
+  grapho_state_file_location <- 
+    paste0(grapho_config_folder, '/grapho_state.RDS')
+
+  if (file.exists(grapho_state_file_location)) {
+
+    # load previous state
+    .GlobalEnv$.grapho <- readRDS(grapho_state_file_location)
+    return(TRUE)
+
+  } else {
+
+    # create new state
+    .GlobalEnv$.grapho <- list()
+    .GlobalEnv$.grapho$grapho_state_file <-
+      grapho_state_file_location
+    .GlobalEnv$.grapho$config$recording <-
+      FALSE
+
+    # save state
+    # create config directory if required
+    if (!dir.exists(grapho_config_folder)) {
+      dir.create(grapho_config_folder, recursive = TRUE)
+    }
+
+    saveRDS(.GlobalEnv$.grapho, grapho_state_file_location)
+
+    return(FALSE)
+  }
+
+}
+
+create_filename <- function(filetype) {
+  paste0(
+    format(Sys.time(), "%y%d%mT%H%M%S"), "-",
+    filetype, "-",
+    .GlobalEnv$.grapho$ids$user_id, "-",
+    .GlobalEnv$.grapho$ids$session_id
+  )
+}
+
+get_salulatation <- function() {
+  # get timezone
+  current_hour <- as.numeric(
+    format(Sys.time(), "%H")
+  )
+  
+  #  find our current period of the day
+  if ((current_hour == 0) | (current_hour > 0 & current_hour < 12)) {
+    this_period <- "morning"
+  }
+  
+  if ((current_hour == 12) | (current_hour > 12 & current_hour < 18)) {
+    this_period <- "afternoon"
+  }
+  
+  if ((current_hour == 18) | (current_hour > 18 & current_hour < 21)) {
+    this_period <- "evening"
+  }
+  
+  if ((current_hour == 21) | (current_hour > 21 & current_hour < 0)) {
+    this_period <- "night"
+  }
+  
+  this_period
+}
+
+#' @rdname show_config
+#' @title Displays grapho config options in a user readable format.
+#' @param return_dataframe If TRUE then a data frame containing your
+#' current settings is returned
+#' @export
+#' @import digest
+show_config <- function(return_dataframe = FALSE) {
+
+  grapho_recording <- ifelse(.GlobalEnv$.grapho$config$recording,
+                            "ENABLED",
+                            "DISABLED")
+
+  settings <- data.frame(
+    Setting = c(
+      'Grapho recording',
+      'Grapho archive',
+      'Past archives',
+      'Plot file format',
+      'User ID',
+      'Session ID',
+      'Log file location',
+      'Randomised log file location'
+    ),
+    Value = c(
+      grapho_recording,
+      .GlobalEnv$.grapho$config$grapho_archive$current,
+      paste(.GlobalEnv$.grapho$config$grapho_archive$past, collapse = ', '),
+      .GlobalEnv$.grapho$config$image_format,
+      .GlobalEnv$.grapho$ids$user_id,
+      .GlobalEnv$.grapho$ids$session_id,
+      .GlobalEnv$.grapho$config$grapho_log_file,
+      .GlobalEnv$.grapho$config$grapho_random_log_file
+    ), stringsAsFactors = FALSE
+  )
+  
+  if(return_dataframe) {
+    settings
+  } else {
+    print(settings, right=F)
+  }
 }

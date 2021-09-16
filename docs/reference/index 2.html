@@ -8,12 +8,19 @@
 
 <title>Function reference • grapho</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/lumen/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
 
@@ -40,6 +47,7 @@
 
 
 <meta property="og:title" content="Function reference" />
+<meta property="og:image" content="/logo.png" />
 
 
 
@@ -71,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">grapho</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -84,26 +92,22 @@
   </a>
 </li>
 <li>
-  <a href="../reference/index.html">Reference</a>
+  <a href="../articles/grapho.html">Get started</a>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/GraphoInternals.html">How Grapho works</a>
-    </li>
-  </ul>
+<li>
+  <a href="../reference/index.html">Reference</a>
 </li>
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/warwickCIM/grapho/">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -131,8 +135,8 @@
     <tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
+          <h2 id="section-accessing-your-data" class="hasAnchor"><a href="#section-accessing-your-data" class="anchor"></a>Accessing your data</h2>
+          <p class="section-desc"><p>Functions for summarising, accessing and visualising your Grapho data.</p></p>
         </th>
       </tr>
       
@@ -143,77 +147,113 @@
       <tr>
         
         <td>
-          <p><code><a href="error_recorder.html">error_recorder()</a></code> </p>
+          <p><code><a href="prepare_archive.html">prepare_archive()</a></code> </p>
         </td>
-        <td><p>Records code errors.
-The error recorder will write any errors to the log file. Commands
-resulting in errors are not passed to the expression recorder, so we
-also collect the most recent command from history.</p></td>
+        <td><p>Prepares Grapho Archive</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="expression_recorder.html">expression_recorder()</a></code> </p>
+          <p><code><a href="parse_grapho_archive.html">parse_grapho_archive()</a></code> </p>
         </td>
-        <td><p>Records expressions evaluated in the console.
-The expression recorder is called when a top-level call is made.
- For instance, when assigning a variable. The call and contents
-of plot devices written out to the Grapho directory and log
-file set in the environment variables
-GRAPHO_LOG_FILE and GRAPHO_FOLDER.</p></td>
+        <td><p>Parses Grapho archive</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="generate_ids.html">generate_ids()</a></code> </p>
+          <p><code><a href="parse_commands.html">parse_commands()</a></code> </p>
         </td>
-        <td><p>Creates session and user IDs then grapho savepaths.</p></td>
+        <td><p>Parses commands from Grapho archive</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="grapho_info.html">grapho_info()</a></code> </p>
+          <p><code><a href="get_function_dependencies.html">get_function_dependencies()</a></code> </p>
         </td>
-        <td><p>Prints information about the grapho package</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="how_does_grapho_work.html">how_does_grapho_work()</a></code> </p>
-        </td>
-        <td><p>An explanation of the inner workings of grapho</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="print_log.html">print_log()</a></code> </p>
-        </td>
-        <td><p>Prints the content of the current log to the console</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="print_random_log.html">print_random_log()</a></code> </p>
-        </td>
-        <td><p>Prints the content of the current randomised log to the console</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="read_archives.html">read_archives()</a></code> </p>
-        </td>
-        <td><p>read_archives</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="setup_grapho.html">setup_grapho()</a></code> </p>
-        </td>
-        <td><p>Set the grapho configuration options</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="show_config.html">show_config()</a></code> </p>
-        </td>
-        <td><p>Displays grapho config options in a user readable format.</p></td>
-      </tr><tr>
+        <td><p>Tries to identify package dependencies</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-controlling-grapho" class="hasAnchor"><a href="#section-controlling-grapho" class="anchor"></a>Controlling Grapho</h2>
+          <p class="section-desc"><p>Functions for controlling Grapho.</p></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
         
         <td>
           <p><code><a href="toggle_grapho.html">toggle_grapho()</a></code> </p>
         </td>
-        <td><p>Turns grapho recording on or off</p></td>
+        <td><p>Toggles Grapho recording</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-recording" class="hasAnchor"><a href="#section-recording" class="anchor"></a>Recording</h2>
+          <p class="section-desc"><p>Grapho functions used internally by Grapho to record your data.</p></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="create_filename.html">create_filename()</a></code> </p>
+        </td>
+        <td><p>Create filename</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="create_log_file.html">create_log_file()</a></code> </p>
+        </td>
+        <td><p>create_log_file</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="error_scribe.html">error_scribe()</a></code> </p>
+        </td>
+        <td><p>Error scribe</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="expression_scribe.html">expression_scribe()</a></code> </p>
+        </td>
+        <td><p>Expression scribe</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="introduce_grapho.html">introduce_grapho()</a></code> </p>
+        </td>
+        <td><p>Introduce Grapho</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="log_session_information.html">log_session_information()</a></code> </p>
+        </td>
+        <td><p>Logs session information</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="setup_grapho_folder.html">setup_grapho_folder()</a></code> </p>
+        </td>
+        <td><p>Setup Grapho folder</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="start_error_scribe.html">start_error_scribe()</a></code> </p>
+        </td>
+        <td><p>Starts error scribe</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="start_expression_scribe.html">start_expression_scribe()</a></code> </p>
+        </td>
+        <td><p>Starts expression scribe</p></td>
       </tr><tr>
         
         <td>
@@ -235,7 +275,7 @@ GRAPHO_LOG_FILE and GRAPHO_FOLDER.</p></td>
 
       <footer>
       <div class="copyright">
-  <p>Developed by James Tripp, Gregory McInerny.</p>
+  <p>Developed by <a href='https://warwick.ac.uk/jamestripp'>James Tripp</a>, <a href='https://warwick.ac.uk/fac/cross_fac/cim/people/greg-mcinerny/'>Gregory McInerny</a>.</p>
 </div>
 
 <div class="pkgdown">
