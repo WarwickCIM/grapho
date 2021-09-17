@@ -4,6 +4,23 @@
       "Good ", get_salulatation(), " and welcome to grapho")
   )
 
+  # new flow
+  # Check if there is a config file
+  #   yes - load existing settings
+  #   no - create config file
+  #      - create default grapho directory
+  #         (notify user temp is created in hoem directory)
+  #         prompt user to run setup to configure dir location
+  #
+  #   grapho_setup
+  #     Notify user that they are configuring grapho options
+  #     prompt to press enter and continue
+  #
+  #     Set new grapho folder
+  #
+  #     Copy over any file from existing grapho folder and
+  #     remove old folder
+
   packageStartupMessage(
     "You can learn more about the package via the grapho_info() function")
 
