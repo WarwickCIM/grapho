@@ -3,7 +3,7 @@
     paste0(
       "Good ", get_salulatation(), " and welcome to grapho")
   )
-  
+
   packageStartupMessage(
     "You can learn more about the package via the grapho_info() function")
 
@@ -15,7 +15,15 @@
 
     grapho_archive_location <- .GlobalEnv$.grapho$config$grapho_archive$current
 
+    print(grapho_archive_location)
+
+    # Create grapho archive if there is no recorded archive location
+    if(!is.null(grapho_archive_location)) {
+      dir.create(grapho_archive_location)
+    }
+
     # create grapho archive if not exists
+    # useful if archive location has been deleted after being set
     if (!dir.exists(grapho_archive_location)) {
       dir.create(grapho_archive_location)
     }
@@ -29,7 +37,7 @@
         ".txt"
       )
     file.create(.GlobalEnv$.grapho$config$grapho_log_file)
-    
+
     # create random variable log file
     .GlobalEnv$.grapho$config$grapho_random_log_file <-
       paste0(
@@ -39,7 +47,7 @@
         ".txt"
       )
     file.create(.GlobalEnv$.grapho$config$grapho_random_log_file)
-    
+
     # create session variable name store - for random log file
     .GlobalEnv$.grapho_variable_table <- data.frame(
       var = character(),
@@ -87,12 +95,14 @@ generate_ids <- function() {
 }
 
 load_past_state <- function(){
-  
-  grapho_config_folder <- 
+
+  grapho_config_folder <-
     tools::R_user_dir("grapho", "config")
-  
-  grapho_state_file_location <- 
+
+  grapho_state_file_location <-
     paste0(grapho_config_folder, '/grapho_state.RDS')
+
+  print(grapho_state_file_location)
 
   if (file.exists(grapho_state_file_location)) {
 
@@ -115,6 +125,8 @@ load_past_state <- function(){
       dir.create(grapho_config_folder, recursive = TRUE)
     }
 
+    # Need to set default grapho folder location
+
     saveRDS(.GlobalEnv$.grapho, grapho_state_file_location)
 
     return(FALSE)
@@ -136,24 +148,24 @@ get_salulatation <- function() {
   current_hour <- as.numeric(
     format(Sys.time(), "%H")
   )
-  
+
   #  find our current period of the day
   if ((current_hour == 0) | (current_hour > 0 & current_hour < 12)) {
     this_period <- "morning"
   }
-  
+
   if ((current_hour == 12) | (current_hour > 12 & current_hour < 18)) {
     this_period <- "afternoon"
   }
-  
+
   if ((current_hour == 18) | (current_hour > 18 & current_hour < 21)) {
     this_period <- "evening"
   }
-  
+
   if ((current_hour == 21) | (current_hour > 21 & current_hour < 0)) {
     this_period <- "night"
   }
-  
+
   this_period
 }
 
@@ -191,7 +203,7 @@ show_config <- function(return_dataframe = FALSE) {
       .GlobalEnv$.grapho$config$grapho_random_log_file
     ), stringsAsFactors = FALSE
   )
-  
+
   if(return_dataframe) {
     settings
   } else {
