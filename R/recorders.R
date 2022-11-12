@@ -14,7 +14,7 @@
 #' @import digest
 expression_recorder <- function(top_level_expr, value, ok, visible) {
   `%notin%` <- Negate(`%in%`)
-  
+
   datestamp <- date()
 
   if ("grapho_archive" %notin% names(.GlobalEnv$.grapho$config)) {
@@ -33,9 +33,9 @@ expression_recorder <- function(top_level_expr, value, ok, visible) {
     randomised_command <- randomise_variable_names(
       code_string = command,
       n_rand = 10)
-    
+
     #message(randomised_command)
-    
+
     if (exists("last.warning")) {
       # Get last warning
       warning <- last.warning # will be null if there have been no
@@ -47,16 +47,16 @@ expression_recorder <- function(top_level_expr, value, ok, visible) {
       write_to_log("COMMAND", command,
                    datestamp,
                    .GlobalEnv$.grapho$config$grapho_log_file)
-      write_to_log("COMMAND", randomised_command,
-                   datestamp,
-                   .grapho$config$grapho_random_log_file)
+      # write_to_log("COMMAND", randomised_command,
+      #              datestamp,
+      #              .grapho$config$grapho_random_log_file)
       if (is.character(warning)) {
         write_to_log("WARNING", warning,
                      datestamp,
                      .GlobalEnv$.grapho$config$grapho_log_file)
-        write_to_log("WARNING", warning,
-                     datestamp,
-                     .GlobalEnv$.grapho$config$grapho_random_log_file)
+        # write_to_log("WARNING", warning,
+        #              datestamp,
+        #              .GlobalEnv$.grapho$config$grapho_random_log_file)
       }
     }
   }
@@ -100,7 +100,7 @@ expression_recorder <- function(top_level_expr, value, ok, visible) {
     }
 
   }
- 
+
   # Return TRUE
   TRUE
 }
@@ -116,7 +116,7 @@ expression_recorder <- function(top_level_expr, value, ok, visible) {
 #' @importFrom utils savehistory tail
 error_recorder <- function(error = geterrmessage()) {
   `%notin%` <- Negate(`%in%`)
-  
+
   datestamp <- date()
 
   # most recent command
@@ -261,14 +261,15 @@ write_plot <- function(folder = NULL, return_location = FALSE) {
 #' @param datestamp Time and date of entry
 #' @param logfile Location of log file
 write_to_log <- function(type, message, datestamp, logfile) {
+  print(logfile)
   cat(paste0("##------ ", datestamp, " ------##"),
       file = logfile,
       append = TRUE)
-  
+
   cat("\n", type, "\n",
       file = logfile,
       append = TRUE)
-  
+
   write(message, file = logfile,
         append = TRUE)
 }
@@ -279,24 +280,24 @@ randomise_variable_names <- function(code_string, n_rand) {
     parse(
       text = str2expression(code_string)
     ))
-  
+
   df <- df[df$terminal==TRUE,]
-  
+
   assignment_locations <- which(
     (df$token == 'EQ_ASSIGN')|
       (df$token == 'LEFT_ASSIGN'))
-  
+
   if (length(assignment_locations) > 0) { # if there are any assignments
-    
+
     # pick out variables
     variable_indexes <- assignment_locations - 1
     variables <- df$text[variable_indexes]
-    
+
     # find new variables
     new_variables <- variables[
       !variables %in% .GlobalEnv$.grapho_variable_table$var
       ]
-    
+
     if (length(new_variables) > 0) { # if there are novel variables
       # add new variables to table
       new_var_table <- data.frame(
@@ -309,7 +310,7 @@ randomise_variable_names <- function(code_string, n_rand) {
           )
         )
       )
-      
+
       # add new columns to variable table
       .GlobalEnv$.grapho_variable_table <-
         rbind(
@@ -317,15 +318,15 @@ randomise_variable_names <- function(code_string, n_rand) {
           new_var_table
         )
     }
-    
+
     # replace variables in code string
     for (variable in .GlobalEnv$.grapho_variable_table$var){
       variable_random <- .GlobalEnv$.grapho_variable_table$var_rand[
         .GlobalEnv$.grapho_variable_table$var == variable
       ]
-      
+
       pattern = paste('[^|\\W](', variable, ')\\W', sep = '')
-      
+
       code_string <- gsub(
         pattern = pattern,
         replacement = variable_random,
@@ -335,6 +336,6 @@ randomise_variable_names <- function(code_string, n_rand) {
   }
 
   #print(code_string)
-  
+
   code_string
 }

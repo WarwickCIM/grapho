@@ -113,21 +113,27 @@ generate_ids <- function() {
 
 load_past_state <- function(){
 
-  grapho_config_folder <-
-    tools::R_user_dir("grapho", "config")
+  # grapho_config_folder <-
+  #   tools::R_user_dir("grapho", "config")
+  #
+  # grapho_state_file_location <-
+  #   paste0(grapho_config_folder, '/grapho_state.RDS')
+  #
+  # print(grapho_state_file_location)
+  #
+  # if (file.exists(grapho_state_file_location)) {
+  #
+  #   # load previous state
+  #   .GlobalEnv$.grapho <- readRDS(grapho_state_file_location)
+  #   return(TRUE)
+  #
+  # } else {
 
-  grapho_state_file_location <-
-    paste0(grapho_config_folder, '/grapho_state.RDS')
+    grapho_config_folder <-
+      tools::R_user_dir("grapho", "config")
 
-  print(grapho_state_file_location)
-
-  if (file.exists(grapho_state_file_location)) {
-
-    # load previous state
-    .GlobalEnv$.grapho <- readRDS(grapho_state_file_location)
-    return(TRUE)
-
-  } else {
+    grapho_state_file_location <-
+      paste0(grapho_config_folder, '/grapho_state.RDS')
 
     # create new state
     .GlobalEnv$.grapho <- list()
@@ -147,7 +153,7 @@ load_past_state <- function(){
     saveRDS(.GlobalEnv$.grapho, grapho_state_file_location)
 
     return(FALSE)
-  }
+#  }
 
 }
 
