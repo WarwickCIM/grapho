@@ -50,7 +50,8 @@ expression_recorder <- function(top_level_expr, value, ok, visible) {
       # write_to_log("COMMAND", randomised_command,
       #              datestamp,
       #              .grapho$config$grapho_random_log_file)
-      if (is.character(warning)) {
+      if (!is.null(warning)) {
+        warning <- names(warning)
         write_to_log("WARNING", warning,
                      datestamp,
                      .GlobalEnv$.grapho$config$grapho_log_file)
