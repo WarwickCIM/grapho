@@ -32,8 +32,6 @@
 
     grapho_archive_location <- .GlobalEnv$.grapho$config$grapho_archive$current
 
-    print(grapho_archive_location)
-
     # Create grapho archive if there is no recorded archive location
     if(!is.null(grapho_archive_location)) {
       dir.create(grapho_archive_location)
@@ -148,8 +146,12 @@ load_past_state <- function(){
       dir.create(grapho_config_folder, recursive = TRUE)
     }
 
-    # Need to set default grapho folder location
+    # create space for last warning store
+    .GlobalEnv$.grapho$store <- list()
+    # last warning is stored here
+    .GlobalEnv$.grapho$store$last_warning <- NULL
 
+    # Need to set default grapho folder location
     saveRDS(.GlobalEnv$.grapho, grapho_state_file_location)
 
     return(FALSE)
