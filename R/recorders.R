@@ -36,11 +36,15 @@ expression_recorder <- function(top_level_expr, value, ok, visible) {
 
     #message(randomised_command)
 
+
+    record_warning <- FALSE
     if (exists("last.warning")) {
-      # Get last warning
-      warning <- last.warning # will be null if there have been no
-    } else {
-      warning <- NULL
+      this_warning <- last.warning
+      last_warning <- .GlobalEnv$.grapho$store$last_warning
+      if (!identical(this_warning, last_warning)){
+        .GlobalEnv$.grapho$store$last_warning <- this_warning
+        record_warning <- TRUE
+      }
     }
 
     if (.GlobalEnv$.grapho$config$recording) {
@@ -50,8 +54,8 @@ expression_recorder <- function(top_level_expr, value, ok, visible) {
       # write_to_log("COMMAND", randomised_command,
       #              datestamp,
       #              .grapho$config$grapho_random_log_file)
-      if (!is.null(warning)) {
-        warning <- names(warning)
+      if (record_warning) {
+        warning <- names(this_warning)
         write_to_log("WARNING", warning,
                      datestamp,
                      .GlobalEnv$.grapho$config$grapho_log_file)
@@ -262,7 +266,6 @@ write_plot <- function(folder = NULL, return_location = FALSE) {
 #' @param datestamp Time and date of entry
 #' @param logfile Location of log file
 write_to_log <- function(type, message, datestamp, logfile) {
-  print(logfile)
   cat(paste0("##------ ", datestamp, " ------##"),
       file = logfile,
       append = TRUE)
