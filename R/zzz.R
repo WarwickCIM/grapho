@@ -210,22 +210,22 @@ show_config <- function(return_dataframe = FALSE) {
     Setting = c(
       'Grapho recording',
       'Grapho archive',
-      'Past archives',
+      #'Past archives',
       'Plot file format',
       'User ID',
       'Session ID',
-      'Log file location',
-      'Randomised log file location'
+      'Log file location'
+      #'Randomised log file location'
     ),
     Value = c(
       grapho_recording,
       .GlobalEnv$.grapho$config$grapho_archive$current,
-      paste(.GlobalEnv$.grapho$config$grapho_archive$past, collapse = ', '),
+      #paste(.GlobalEnv$.grapho$config$grapho_archive$past, collapse = ', '),
       .GlobalEnv$.grapho$config$image_format,
       .GlobalEnv$.grapho$ids$user_id,
       .GlobalEnv$.grapho$ids$session_id,
-      .GlobalEnv$.grapho$config$grapho_log_file,
-      .GlobalEnv$.grapho$config$grapho_random_log_file
+      .GlobalEnv$.grapho$config$grapho_log_file
+      #.GlobalEnv$.grapho$config$grapho_random_log_file
     ), stringsAsFactors = FALSE
   )
 
